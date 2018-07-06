@@ -2,8 +2,7 @@
 
 require 'autoload.php';
 
-$form=new PhpRosa\Models\Form();
-$form->description='For testing';
+$form= \PhpRosa\Models\Form::create(['formID'=>'myform','description'=>'Something small','allwd'=>'Just OK']);
 $writer=new XMLWriter();
 $writer->openMemory();
 $writer->startDocument();

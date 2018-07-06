@@ -32,5 +32,11 @@ trait TraitGenerator {
         $xmlWriter->endElement();
         return $xmlWriter;
     }
+    
+    public function __set($name,$value) {
+        throw new \RuntimeException('Setting properties not allowed!');
+    }
+    
+    
 
 }
