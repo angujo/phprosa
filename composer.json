@@ -1,0 +1,13 @@
+{
+    "name": "bangujo/phprosa",
+    "description": "Php version of OpenRosa",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Barrack Angujo",
+            "email": "angujomondi@gmail.com"
+        }
+    ],
+    "require": {}
+}
