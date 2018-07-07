@@ -3,38 +3,21 @@
 namespace PhpRosa\Models;
 
 /**
- * 
+ *
  */
-class Form {
+class Form extends Factory implements FormInterface
+{
 
     use TraitGenerator;
-    
-    protected $root='xform';
-    private $formID;
-    private $name;
-    private $version;
-    private $hash;
-    private $description;
-    private $downloadURL;
-    private $manifestUrl;
 
-    private function __construct() {
-    }
-    
-    public static function create($details) {
-        if(is_object($details)){
-            $details= get_object_vars($details);
-        }
-        $det= is_array($details)?$details:[];
-        return (new self)->fromArray($det);
-    }
-    
-    private function fromArray(array $details) {
-        foreach ($details as $key => $value) {
-            if(!property_exists($this, $key))                continue;
-            $this->{$key}=$value;
-        }
-        return $this;
-    }
+    protected $root = 'xform';
+    protected $formID;
+    protected $name;
+    protected $version;
+    protected $hash;
+    protected $description;
+    protected $downloadURL;
+    protected $manifestUrl;
 
+    protected function __construct() { }
 }
