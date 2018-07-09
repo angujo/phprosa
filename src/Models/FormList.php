@@ -17,7 +17,7 @@ namespace PhpRosa\Models;
 class FormList
 {
     use TraitGenerator;
-    protected $_xmlns = Args::OPENROSA_XMLNS;
+    protected $_xmlns = Args::OPENROSA_FORMLIST;
     protected $forms  = [];
     protected $root   = 'xforms';
 

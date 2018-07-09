@@ -19,7 +19,7 @@ class Manifest
     use TraitGenerator;
     protected $_xmlns = Args::OPENROSA_MANIFEST;
     protected $media  = [];
-    protected $root   = 'xforms';
+    protected $root   = 'manifest';
 
     /**
      * @param FormInterface $media_file
