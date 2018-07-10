@@ -5,6 +5,7 @@
  * Date: 2018-07-07
  * Time: 9:42 AM
  */
+namespace PhpRosa\Form;
 
 class Data
 {
@@ -27,6 +28,6 @@ class Data
      */
     public static function types()
     {
-        return (new ReflectionClass(__CLASS__))->getConstants();
+        return (new \ReflectionClass(__CLASS__))->getConstants();
     }
 }

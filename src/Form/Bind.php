@@ -6,6 +6,10 @@
  * Time: 9:14 AM
  */
 
+namespace PhpRosa\Form;
+
+use PhpRosa\Util\Strings;
+
 /**
  * Class Bind
  * @property $nodeset
@@ -44,9 +48,52 @@ class Bind
 
     private $stringed = [];
 
+    public function __set($property, $val)
+    {
+        $property = $this->slugged($property);
+        if (!in_array($property, $this->attributes, false)) throw new \RuntimeException("'$property' is invalid!");
+        $this->values[$property] = $val;
+        $this->stringfy();
+    }
+
+    public function __get($property)
+    {
+        $property = $this->slugged($property);
+        return array_key_exists($property, $this->stringed) ? $this->stringed[$property] : null;
+    }
+
+    public function xml(\XMLWriter $writer)
+    {
+        if (empty($this->stringed)) return $writer;
+        $writer->startElement('bind');
+        foreach ($this->stringed as $attr => $value) {
+            $writer->writeAttribute($attr, $value);
+        }
+        $writer->endElement();
+        return $writer;
+    }
+
+    public function __isset($property)
+    {
+        $property = $this->slugged($property);
+        return array_key_exists($property, $this->values);
+    }
+
+    public function slugged($property)
+    {
+        foreach ($this->attributes as $attribute) {
+            if (strcmp(Strings::slugify($attribute, [], '_'), $property) === 0) {
+                $property = $attribute;
+                break;
+            }
+        }
+        return $property;
+    }
+
     private function stringfy()
     {
         foreach ($this->values as $key => $value) {
+            if (!in_array($key, $this->attributes, false)) continue;
             $this->stringed[$key] = $this->stringValue($key, $value);
         }
     }
@@ -54,33 +101,24 @@ class Bind
     private function stringValue($key, $value)
     {
         switch ($key) {
-            case 'nodeset':
-                break;
             case 'type':
                 return in_array($value, Data::types(), false) ? $value : Data::TYPE_STRING;
                 break;
             case 'readonly':
-                break;
             case 'required':
-                break;
             case 'relevant':
-                break;
-            case 'constraint':
-                break;
-            case 'calculate':
-                break;
             case 'saveIncomplete':
-                break;
+                return $value ? 'true()' : 'false()';
+            case 'constraint':
+            case 'nodeset':
+            case 'calculate':
             case 'jr:requiredMsg':
-                break;
             case 'jr:constraintMsg':
-                break;
             case 'jr:preload':
-                break;
             case 'jr:preloadParams':
-                break;
+                return $value;
             case 'orx:max-pixels':
-                break;
+                return is_numeric($value) ? $value : '1024';
         }
     }
 }

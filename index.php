@@ -1,10 +1,10 @@
 <?php
 
-require 'autoload.php';
+require 'src\autoload.php';
 require 'vendor\autoload.php';
 
 header('Content-Type: xml\text;charset:utf');
-$faker=Faker\Factory::create();
+/*$faker=Faker\Factory::create();
 
 $form= \PhpRosa\Models\Form::create(['formID'=>$faker->md5,'description'=>$faker->sentence,'allwd'=>'Just OK']);
 $form2= \PhpRosa\Models\Form::create(['formID'=>'myform343','description'=>'Something small','allwd'=>'Just OK']);
@@ -20,11 +20,20 @@ for ($i=0;$i<5;$i++){
 $forms->addForm($group);
 //$manifest->xml($writer);
 
+$bind=new \PhpRosa\Form\Bind();
+$bind->nodeset='/data/fname';
+$bind->type='number';
+$bind->calculate='[2323]+3434';*/
+
+$meta=new \PhpRosa\Form\MetaData();
+$meta->email=true;
+$meta->instanceID=true;
 
 $writer=new XMLWriter();
 $writer->openMemory();
 $writer->startDocument();
-$response=\PhpRosa\Models\Response::simpleResponse($writer,'Form received successfully!');
+$meta->xml($writer);
+//$response=\PhpRosa\Models\Response::simpleResponse($writer,'Form received successfully!');
 $writer->endDocument();
 
 print_r ($writer->outputMemory(TRUE));
