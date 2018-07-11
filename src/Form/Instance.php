@@ -9,6 +9,7 @@
 namespace PhpRosa\Form;
 
 use PhpRosa\Models\Args;
+use PhpRosa\Util\Strings;
 
 /**
  * Class Instance
@@ -20,12 +21,16 @@ use PhpRosa\Models\Args;
  */
 class Instance
 {
-    private $primary     = false;
-    private $root        = 'root';
+    private $primary = false;
+    private $element = 'instance';
+    private $root    = 'root';
+    /** @var MetaData */
     private $meta;
     private $default_path;
     private $recent_path;
     private $field_paths = [];
+    /** @var ItemsList */
+    private $listItem;
 
     private $attributes = [
         'id' => 'id',
@@ -34,22 +39,22 @@ class Instance
     ];
     private $values     = [];
 
-    private function __construct($r)
+    private function __construct($r, $id)
     {
         $this->root = $r;
+        $this->id = $id;
         $this->default_path = uniqid('xpath_', false);
     }
 
-    public static function create($root = 'root')
+    public static function create($id, $root = 'root')
     {
-        return new self($root);
+        return new self($root, $id);
     }
 
     public function addFieldName($name, $xpath = null, $value = null)
     {
         $this->recent_path = (null === $xpath && null === $this->recent_path) ? $this->default_path : (null === $xpath ? $this->recent_path : $xpath);
-        $item = null === $value ? $name : [$name, $value];
-        $this->field_paths[$this->recent_path][] = $item;
+        $this->field_paths[$this->recent_path][] = FieldSummary::create($name, $value);
         return $this;
     }
 
@@ -71,9 +76,15 @@ class Instance
         return isset($this->values[$property]) ? $this->values[$property] : null;
     }
 
-    public function isPrimary($s = true)
+    public function setPrimary($s = true)
     {
         $this->primary = $s;
+        return $this;
+    }
+
+    public function isPrimary()
+    {
+        return $this->primary;
     }
 
     /**
@@ -84,6 +95,82 @@ class Instance
     {
         $this->meta = $meta;
         return $this;
+    }
+
+    public function xml(\XMLWriter $writer)
+    {
+        if (!$this->primary && count($this->listItem)) return $this->listing($writer);
+        $root = $this->root;
+        if ($this->primary) {
+            $root = strcmp('root', $this->root) === 0 ? 'data' : $this->root;
+        }
+        $writer->startElement($this->element);
+        if (!$this->primary) $this->setAttributes($writer);
+        $writer->startElement($root);
+        if ($this->primary) $this->setAttributes($writer);
+        $this->setXPath($writer);
+        if ($this->primary && $this->meta) $this->meta->xml($writer);
+        $writer->endElement();
+        $writer->endElement();
+        return $writer;
+    }
+
+    public function setItemsList(ItemsList $itemsList)
+    {
+        $this->listItem = $itemsList;
+        return $this;
+    }
+
+    public function addItem(Item $item)
+    {
+        if (null === $this->listItem || !is_object($this->listItem) || !is_a($this->listItem, ItemsList::class)) $this->listItem = ItemsList::create('root');
+        $this->listItem->addItem($item);
+        return $this;
+    }
+
+    private function listing(\XMLWriter $writer)
+    {
+        $writer->startElement($this->element);
+        $writer->writeAttribute('id',$this->id);
+        $this->listItem->xml($writer);
+        $writer->endElement();
+        return $writer;
+    }
+
+    private function setAttributes(\XMLWriter $writer)
+    {
+        foreach ($this->values as $key => $value) {
+            $writer->writeAttribute($this->attributes[$key], $value);
+        }
+    }
+
+    private function setXPath(\XMLWriter $writer)
+    {
+        if (isset($this->field_paths[$this->default_path])) {
+            foreach ($this->field_paths[$this->default_path] as $field) {
+                $field->xml($writer);
+            }
+            unset($this->field_paths[$this->default_path]);
+        }
+        $output = [];
+        foreach ($this->field_paths as $field_path => $values) {
+            $paths = implode('.', array_filter(array_map('trim', explode('.', $field_path))));
+            Strings::dottedToArray($output, $paths, $values);
+        }
+        $this->xPath($output, $writer);
+    }
+
+    private function xPath(array $entries, \XMLWriter $writer)
+    {
+        foreach ($entries as $m => $entry) {
+            if (is_array($entry)) {
+                $writer->startElement($m);
+                $this->xPath($entry, $writer);
+                $writer->endElement();
+            } else {
+                $entry->xml($writer);
+            }
+        }
     }
 
     private function valid($property)

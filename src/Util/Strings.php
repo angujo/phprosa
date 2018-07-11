@@ -10,7 +10,8 @@ namespace PhpRosa\Util;
 
 class Strings
 {
-    public static function  slugify($string,array $replace = array(), $delimiter = '-') {
+    public static function slugify($string, array $replace = array(), $delimiter = '-')
+    {
         // https://github.com/phalcon/incubator/blob/master/Library/Phalcon/Utils/Slug.php
         if (!extension_loaded('iconv')) {
             throw new \Exception('iconv module not loaded');
@@ -20,7 +21,7 @@ class Strings
         setlocale(LC_ALL, 'en_US.UTF-8');
         $clean = iconv('UTF-8', 'ASCII//TRANSLIT', $string);
         if (!empty($replace)) {
-            $clean = str_replace((array) $replace, ' ', $clean);
+            $clean = str_replace((array)$replace, ' ', $clean);
         }
         $clean = preg_replace("/[^a-zA-Z0-9\/_|+ -]/", '', $clean);
         $clean = strtolower($clean);
@@ -29,5 +30,16 @@ class Strings
         // Revert back to the old locale
         setlocale(LC_ALL, $oldLocale);
         return $clean;
+    }
+
+    public static function dottedToArray(&$arr, $path, $value)
+    {
+        $keys = explode('.', $path);
+
+        foreach ($keys as $key) {
+            $arr = &$arr[$key];
+        }
+
+        $arr = $value;
     }
 }
