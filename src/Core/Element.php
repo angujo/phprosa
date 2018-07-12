@@ -11,7 +11,7 @@ namespace Angujo\PhpRosa\Core;
 
 use Angujo\PhpRosa\Core\Writer;
 
-class Element extends ElementHolder
+class Element extends XMLElement
 {
     private $parent;
     /** @var array */

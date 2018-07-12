@@ -9,7 +9,7 @@
 namespace Angujo\PhpRosa\Core;
 
 
-abstract class ElementHolder
+abstract class XMLElement
 {
     public    $id;
     protected $name;
@@ -35,7 +35,7 @@ abstract class ElementHolder
 
     /**
      * @param mixed $content
-     * @return ElementHolder
+     * @return XMLElement
      */
     public function setContent($content)
     {

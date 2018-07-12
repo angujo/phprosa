@@ -11,7 +11,7 @@ namespace Angujo\PhpRosa\Core;
 
 use Angujo\PhpRosa\Core\Writer;
 
-class Attribute extends ElementHolder
+class Attribute extends XMLElement
 {
     private $element;
 
