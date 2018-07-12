@@ -6,15 +6,17 @@
  * Time: 6:59 AM
  */
 
-namespace PhpRosa\Form\Controls;
+namespace Angujo\PhpRosa\Form\Controls;
 
 
-use PhpRosa\Form\Control;
+use Angujo\PhpRosa\Form\Control;
+use Angujo\PhpRosa\Core\Writer;
 
 class Upload extends Control
 {
     private $types = [];
     private $auto  = false;
+    const ELEMENT = 'upload';
 
     public static function image($label, $name)
     {
@@ -66,9 +68,9 @@ class Upload extends Control
         $this->types[] = $mime;
     }
 
-    public function xml(\XMLWriter $writer)
+    public function write(Writer $writer)
     {
         $this->attributes['mediatype'] = implode(',', $this->types);
-        return parent::xml($writer, null);
+        return parent::write($writer, null);
     }
 }

@@ -6,7 +6,7 @@
  * Time: 2:41 AM
  */
 
-namespace PhpRosa\Models;
+namespace Angujo\PhpRosa\Models;
 
 
 abstract class Factory

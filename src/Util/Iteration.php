@@ -6,7 +6,7 @@
  * Time: 7:56 PM
  */
 
-namespace PhpRosa\Util;
+namespace Angujo\PhpRosa\Util;
 
 
 abstract class Iteration implements \Iterator, \ArrayAccess, \Countable

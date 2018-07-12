@@ -6,7 +6,7 @@
  * Time: 2:57 AM
  */
 
-namespace PhpRosa\Models;
+namespace Angujo\PhpRosa\Models;
 
 
 class Args

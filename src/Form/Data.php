@@ -5,7 +5,7 @@
  * Date: 2018-07-07
  * Time: 9:42 AM
  */
-namespace PhpRosa\Form;
+namespace Angujo\PhpRosa\Form;
 
 class Data
 {

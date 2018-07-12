@@ -25,34 +25,42 @@ $bind->nodeset='/data/fname';
 $bind->type='number';
 $bind->calculate='[2323]+3434';*/
 
-/*$meta = new \PhpRosa\Form\MetaData();
+/**/
+$meta = new Angujo\PhpRosa\Form\MetaData();
 $meta->email = true;
 $meta->instanceID = true;
 
-$instance = \PhpRosa\Form\Instance::create($faker->slug, 'data');
-$instance->setPrimary();
-$instance->version = $faker->date('YmdHis');
-$instance->addFieldName('firstname');
-$instance->addFieldName('lastname');
-$instance->addFieldName('othername');
-$instance->addFieldName('age', 'adults', 90);
-$instance->setMeta($meta);*/
+$primary = Angujo\PhpRosa\Form\Instance::create($faker->slug, 'data');
+$primary->setPrimary();
+$primary->version = $faker->date('YmdHis');
+$primary->addFieldName('firstname');
+$primary->addFieldName('lastname');
+$primary->addFieldName('othername');
+$primary->addFieldName('age', 'adults', 90);
+$primary->setMeta($meta);
 
-$instance=\PhpRosa\Form\Instance::create($faker->slug(1));
-$items=\PhpRosa\Form\ItemsList::create('root');
+$instance=Angujo\PhpRosa\Form\Instance::create($faker->slug(1));
+$items=Angujo\PhpRosa\Form\ItemsList::create('root');
 for ($i=0;$i<5;$i++){
-    $item=\PhpRosa\Form\Item::create($faker->slug(1));
+    $item=Angujo\PhpRosa\Form\Item::create($faker->slug(1));
     $item->addNode('country',$faker->country);
     $item->addNode('code',$faker->countryCode);
     $items->addItem($item);
 }
 $instance->setItemsList($items);
 
-$writer = new XMLWriter();
+$meta=new \Angujo\PhpRosa\Form\MetaData();
+$meta->email=$meta->instanceID=$meta->deviceID=true;
+$writer=new Angujo\PhpRosa\Core\Writer();
+$primary->write($writer);
+//$instance->write($writer);
+//$meta->xml($writer);
+print_r($writer->xml());
+
+/*$writer = new XMLWriter();
 $writer->openMemory();
 $writer->startDocument();
-$instance->xml($writer);
 //$response=\PhpRosa\Models\Response::simpleResponse($writer,'Form received successfully!');
 $writer->endDocument();
 
-print_r($writer->outputMemory(TRUE));
+print_r($writer->outputMemory(TRUE));*/

@@ -6,7 +6,7 @@
  * Time: 4:10 AM
  */
 
-namespace PhpRosa\Models;
+namespace Angujo\PhpRosa\Models;
 
 
 class MediaFile extends Factory implements FormInterface

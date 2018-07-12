@@ -6,8 +6,10 @@
  * Time: 4:25 AM
  */
 
-namespace PhpRosa\Form;
+namespace Angujo\PhpRosa\Form;
 
+
+use Angujo\PhpRosa\Core\Writer;
 
 class Item
 {
@@ -31,7 +33,7 @@ class Item
         $this->nodes[$name] = $value;
     }
 
-    public function xml(\XMLWriter $writer)
+    public function write(Writer $writer)
     {
         if (empty($this->nodes)) return $writer;
         $writer->startElement('item');

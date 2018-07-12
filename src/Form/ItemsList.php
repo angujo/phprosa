@@ -6,10 +6,11 @@
  * Time: 4:30 AM
  */
 
-namespace PhpRosa\Form;
+namespace Angujo\PhpRosa\Form;
 
 
-use PhpRosa\Util\Iteration;
+use Angujo\PhpRosa\Util\Iteration;
+use Angujo\PhpRosa\Core\Writer;
 
 class ItemsList extends Iteration
 {
@@ -30,12 +31,12 @@ class ItemsList extends Iteration
         $this->list[] = $item;
     }
 
-    public function xml(\XMLWriter $writer)
+    public function write(Writer $writer)
     {
         if (empty($this->list)) return $writer;
         if (null !== $this->root) $writer->startElement($this->root);
         foreach ($this->list as $item) {
-            $item->xml($writer);
+            $item->write($writer);
         }
         if (null !== $this->root) $writer->endElement();
         return $writer;

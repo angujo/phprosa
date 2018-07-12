@@ -6,11 +6,12 @@
  * Time: 5:35 AM
  */
 
-namespace PhpRosa\Form\Controls;
+namespace Angujo\PhpRosa\Form\Controls;
 
 
-use PhpRosa\Form\Control;
-use PhpRosa\Form\ItemsList;
+use Angujo\PhpRosa\Form\Control;
+use Angujo\PhpRosa\Form\ItemsList;
+use Angujo\PhpRosa\Core\Writer;
 
 class Select extends Control
 {
@@ -30,10 +31,10 @@ class Select extends Control
         return $this;
     }
 
-    public function xml(\XMLWriter $writer)
+    public function write(Writer $writer)
     {
-        return parent::xml($writer, function (\XMLWriter $writer) {
-            $this->options->xml($writer);
+        return parent::write($writer, function (Writer $writer) {
+            $this->options->write($writer);
         });
     }
 }

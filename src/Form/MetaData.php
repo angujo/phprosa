@@ -6,13 +6,14 @@
  * Time: 5:49 AM
  */
 
-namespace PhpRosa\Form;
+namespace Angujo\PhpRosa\Form;
 
-use PhpRosa\Models\Args;
+use Angujo\PhpRosa\Models\Args;
+use Angujo\PhpRosa\Core\Writer;
 
 /**
  * Class MetaData
- * @package PhpRosa\Form
+ * @package Angujo\PhpRosa\Form
  *
  * @property bool $instanceID;
  * @property bool $timeStart;
@@ -65,11 +66,11 @@ class MetaData
         }
     }
 
-    public function xml(\XMLWriter $writer)
+    public function write(Writer $writer)
     {
-        $writer->startElementNS(Args::ELMT_ROSAFORM, 'meta', null);
+        $writer->startElementNs(Args::ELMT_ROSAFORM, 'meta', null);
         foreach ($this->set as $item) {
-            $writer->writeElementNS(Args::ELMT_ROSAFORM, $item, null);
+            $writer->writeElementNs(Args::ELMT_ROSAFORM, $item, null,null);
         }
         $writer->endElement();
     }

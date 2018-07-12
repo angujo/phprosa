@@ -6,7 +6,7 @@
  * Time: 4:49 AM
  */
 
-namespace PhpRosa\Util;
+namespace Angujo\PhpRosa\Util;
 
 class Strings
 {

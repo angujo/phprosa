@@ -6,9 +6,10 @@
  * Time: 9:14 AM
  */
 
-namespace PhpRosa\Form;
+namespace Angujo\PhpRosa\Form;
 
-use PhpRosa\Util\Strings;
+use Angujo\PhpRosa\Util\Strings;
+use Angujo\PhpRosa\Core\Writer;
 
 /**
  * Class Bind
@@ -62,7 +63,7 @@ class Bind
         return array_key_exists($property, $this->stringed) ? $this->stringed[$property] : null;
     }
 
-    public function xml(\XMLWriter $writer)
+    public function write(Writer $writer)
     {
         if (empty($this->stringed)) return $writer;
         $writer->startElement('bind');

@@ -6,8 +6,10 @@
  * Time: 6:41 PM
  */
 
-namespace PhpRosa\Form;
+namespace Angujo\PhpRosa\Form;
 
+
+use Angujo\PhpRosa\Core\Writer;
 
 class FieldSummary implements FieldInterface
 {
@@ -25,7 +27,7 @@ class FieldSummary implements FieldInterface
         return new self($name, $value);
     }
 
-    public function xml(\XMLWriter $writer)
+    public function write(Writer $writer)
     {
         $writer->startElement($this->name);
         if (null !== $this->default_value) $writer->text($this->default_value);

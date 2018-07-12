@@ -6,7 +6,7 @@
  * Time: 3:08 AM
  */
 
-namespace PhpRosa\Models;
+namespace Angujo\PhpRosa\Models;
 
 
 interface FormInterface

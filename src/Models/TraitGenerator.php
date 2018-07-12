@@ -6,7 +6,9 @@
  * and open the template in the editor.
  */
 
-namespace PhpRosa\Models;
+namespace Angujo\PhpRosa\Models;
+
+use Angujo\PhpRosa\Core\Writer;
 
 /**
  *
@@ -17,10 +19,10 @@ trait TraitGenerator
 
     /**
      *
-     * @param \XMLWriter $xmlWriter
-     * @return \XMLWriter
+     * @param Writer $xmlWriter
+     * @return Writer
      */
-    public function xml(\XMLWriter $xmlWriter)
+    public function write(Writer $xmlWriter)
     {
         $vars = get_object_vars($this);
         $xmlWriter->startElement($this->root);

@@ -6,20 +6,21 @@
  * Time: 5:12 AM
  */
 
-namespace PhpRosa\Form\Controls;
+namespace Angujo\PhpRosa\Form\Controls;
 
 
-use PhpRosa\Form\Control;
+use Angujo\PhpRosa\Form\Control;
+use Angujo\PhpRosa\Core\Writer;
 
 class Input extends Control
 {
     const ELEMENT = 'input';
 
 
-    public function xml(\XMLWriter $writer)
+    public function write(Writer $writer)
     {
-        return parent::xml($writer, function (\XMLWriter $writer) {
-            $this->hintXml($writer);
+        return parent::write($writer, function (Writer $writer) {
+            $this->hintwrite($writer);
         });
     }
 }

@@ -6,7 +6,7 @@
  * and open the template in the editor.
  */
 
-namespace PhpRosa\Models;
+namespace Angujo\PhpRosa\Models;
 
 /**
  * Description of Generator

@@ -6,10 +6,10 @@
  * Time: 6:27 AM
  */
 
-namespace PhpRosa\Form\Controls;
+namespace Angujo\PhpRosa\Form\Controls;
 
 
-use PhpRosa\Form\Item;
+use Angujo\PhpRosa\Form\Item;
 
 class Option extends Item
 {

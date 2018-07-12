@@ -6,11 +6,11 @@
  * Time: 5:33 AM
  */
 
-namespace PhpRosa\Form\Controls;
+namespace Angujo\PhpRosa\Form\Controls;
 
 
-use PhpRosa\Form\Control;
-use PhpRosa\Form\ItemsList;
+use Angujo\PhpRosa\Form\Control;
+use Angujo\PhpRosa\Form\ItemsList;
 
 class SelectOne extends Select
 {

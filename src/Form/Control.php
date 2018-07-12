@@ -6,8 +6,10 @@
  * Time: 5:12 AM
  */
 
-namespace PhpRosa\Form;
+namespace Angujo\PhpRosa\Form;
 
+
+use Angujo\PhpRosa\Core\Writer;
 
 abstract class Control
 {
@@ -30,22 +32,22 @@ abstract class Control
         return new static($label, $name);
     }
 
-    protected function labelXml(\XMLWriter $writer)
+    protected function labelwrite(Writer $writer)
     {
         $writer->writeElement('label', $this->label);
     }
 
-    protected function hintXml(\XMLWriter $writer)
+    protected function hintwrite(Writer $writer)
     {
         if ($this->hint) $writer->writeElement('hint', $this->hint);
     }
 
     /**
-     * @param \XMLWriter $writer
+     * @param Writer $writer
      * @param \Closure|null $closure
-     * @return \XMLWriter
+     * @return Writer
      */
-    protected function xml(\XMLWriter $writer, $closure = null)
+    protected function write(Writer $writer, $closure = null)
     {
         $writer->startElement(static::ELEMENT);
         $writer->writeAttribute('ref', $this->name);
@@ -54,7 +56,7 @@ abstract class Control
                 $writer->writeAttribute($name,$val);
             }
         }
-        $this->labelXml($writer);
+        $this->labelwrite($writer);
         if (is_callable($closure)) $closure($writer);
         $writer->endElement();
         return $writer;

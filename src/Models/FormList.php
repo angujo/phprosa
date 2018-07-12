@@ -6,12 +6,12 @@
  * Time: 3:05 AM
  */
 
-namespace PhpRosa\Models;
+namespace Angujo\PhpRosa\Models;
 
 
 /**
  * Class FormList
- * @package PhpRosa\Models
+ * @package Angujo\PhpRosa\Models
  *
  */
 class FormList

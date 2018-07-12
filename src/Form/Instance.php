@@ -6,14 +6,15 @@
  * Time: 6:23 AM
  */
 
-namespace PhpRosa\Form;
+namespace Angujo\PhpRosa\Form;
 
-use PhpRosa\Models\Args;
-use PhpRosa\Util\Strings;
+use Angujo\PhpRosa\Models\Args;
+use Angujo\PhpRosa\Util\Strings;
+use Angujo\PhpRosa\Core\Writer;
 
 /**
  * Class Instance
- * @package PhpRosa\Form
+ * @package Angujo\PhpRosa\Form
  *
  * @property string $id
  * @property string|int $version;
@@ -97,7 +98,7 @@ class Instance
         return $this;
     }
 
-    public function xml(\XMLWriter $writer)
+    public function write(Writer $writer)
     {
         if (!$this->primary && count($this->listItem)) return $this->listing($writer);
         $root = $this->root;
@@ -109,7 +110,7 @@ class Instance
         $writer->startElement($root);
         if ($this->primary) $this->setAttributes($writer);
         $this->setXPath($writer);
-        if ($this->primary && $this->meta) $this->meta->xml($writer);
+        if ($this->primary && $this->meta) $this->meta->write($writer);
         $writer->endElement();
         $writer->endElement();
         return $writer;
@@ -128,27 +129,27 @@ class Instance
         return $this;
     }
 
-    private function listing(\XMLWriter $writer)
+    private function listing(Writer $writer)
     {
         $writer->startElement($this->element);
         $writer->writeAttribute('id',$this->id);
-        $this->listItem->xml($writer);
+        $this->listItem->write($writer);
         $writer->endElement();
         return $writer;
     }
 
-    private function setAttributes(\XMLWriter $writer)
+    private function setAttributes(Writer $writer)
     {
         foreach ($this->values as $key => $value) {
             $writer->writeAttribute($this->attributes[$key], $value);
         }
     }
 
-    private function setXPath(\XMLWriter $writer)
+    private function setXPath(Writer $writer)
     {
         if (isset($this->field_paths[$this->default_path])) {
             foreach ($this->field_paths[$this->default_path] as $field) {
-                $field->xml($writer);
+                $field->write($writer);
             }
             unset($this->field_paths[$this->default_path]);
         }
@@ -160,7 +161,7 @@ class Instance
         $this->xPath($output, $writer);
     }
 
-    private function xPath(array $entries, \XMLWriter $writer)
+    private function xPath(array $entries, Writer $writer)
     {
         foreach ($entries as $m => $entry) {
             if (is_array($entry)) {
@@ -168,7 +169,7 @@ class Instance
                 $this->xPath($entry, $writer);
                 $writer->endElement();
             } else {
-                $entry->xml($writer);
+                $entry->write($writer);
             }
         }
     }

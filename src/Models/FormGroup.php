@@ -6,7 +6,7 @@
  * Time: 3:34 AM
  */
 
-namespace PhpRosa\Models;
+namespace Angujo\PhpRosa\Models;
 
 
 class FormGroup extends Factory implements FormInterface

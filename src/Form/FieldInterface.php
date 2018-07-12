@@ -6,7 +6,7 @@
  * Time: 6:40 PM
  */
 
-namespace PhpRosa\Form;
+namespace Angujo\PhpRosa\Form;
 
 
 interface FieldInterface

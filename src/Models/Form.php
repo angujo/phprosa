@@ -1,6 +1,6 @@
 <?php
 
-namespace PhpRosa\Models;
+namespace Angujo\PhpRosa\Models;
 
 /**
  *

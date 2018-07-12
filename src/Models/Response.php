@@ -6,7 +6,7 @@
  * Time: 8:26 AM
  */
 
-namespace PhpRosa\Models;
+namespace Angujo\PhpRosa\Models;
 
 
 class Response
