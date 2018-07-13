@@ -35,8 +35,8 @@ class Instance
 
     private $attributes = [
         'id' => 'id',
-        'version' => Args::ELMT_ROSAFORM . ':version',
-        'template' => Args::ELMT_JAVAROSA . ':template',
+        'version' => Args::NS_ROSAFORM . ':version',
+        'template' => Args::NS_JAVAROSA . ':template',
     ];
     private $values     = [];
 

@@ -17,7 +17,7 @@ namespace Angujo\PhpRosa\Models;
 class FormList
 {
     use TraitGenerator;
-    protected $_xmlns = Args::OPENROSA_FORMLIST;
+    protected $_xmlns = Args::URI_FORMLIST;
     protected $forms  = [];
     protected $root   = 'xforms';
 

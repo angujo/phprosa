@@ -16,7 +16,7 @@ class Response
     public static function simpleResponse(\XMLWriter $xmlWriter, $message)
     {
         $xmlWriter->startElement(self::ROSA_ENVELOPE);
-        $xmlWriter->writeAttribute('xmlns', Args::OPENROSA_RESPONSE);
+        $xmlWriter->writeAttribute('xmlns', Args::URI_RESPONSE);
         $xmlWriter->writeElement('message', $message);
         $xmlWriter->endElement();
         return $xmlWriter;

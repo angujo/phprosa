@@ -13,7 +13,7 @@ use Angujo\PhpRosa\Models\Args;
 
 class Rank extends Select
 {
-    protected $namespace = Args::ELMT_ODKFORM;
-    protected $uri       = Args::ODK_XFORMS;
+    protected $namespace = Args::NS_ODKFORM;
+    protected $uri       = Args::URI_ODKFORMS;
     const ELEMENT = 'rank';
 }

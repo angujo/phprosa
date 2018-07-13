@@ -38,7 +38,7 @@ class Repeat extends ControlCollection
     private function setAddRemove()
     {
         if (!$this->noAddRemove) return;
-        $attr = new Attribute('noAddRemove', Args::ELMT_JAVAROSA, Args::OPENROSA_JAVAROSA);
+        $attr = new Attribute('noAddRemove', Args::NS_JAVAROSA, Args::URI_JAVAROSA);
         $attr->setContent($this->noAddRemove);
         $this->attributes[] = $attr;
     }
@@ -46,7 +46,7 @@ class Repeat extends ControlCollection
     private function setCounter()
     {
         if (!$this->count) return;
-        $attr = new Attribute('count', Args::ELMT_JAVAROSA, Args::OPENROSA_JAVAROSA);
+        $attr = new Attribute('count', Args::NS_JAVAROSA, Args::URI_JAVAROSA);
         $attr->setContent($this->count);
         $this->attributes[] = $attr;
     }

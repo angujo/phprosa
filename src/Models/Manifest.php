@@ -17,7 +17,7 @@ namespace Angujo\PhpRosa\Models;
 class Manifest
 {
     use TraitGenerator;
-    protected $_xmlns = Args::OPENROSA_MANIFEST;
+    protected $_xmlns = Args::URI_MANIFEST;
     protected $media  = [];
     protected $root   = 'manifest';
 
