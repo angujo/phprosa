@@ -84,14 +84,14 @@ abstract class ControlCollection implements GroupRepeat
 
     /**
      * @param Writer $writer
-     * @param null|\Closure $closure
      */
-    public function write(Writer $writer, $closure = null)
+    public function write(Writer $writer)
     {
         $writer->startElement(static::ELEMENT);
         foreach ($this->attributes as $attribute) {
             $writer->addAttribute($attribute);
         }
+        if ($this->label) $writer->writeElement('label',$this->label);
         foreach ($this->controls as $control) {
             $control->write($writer);
         }

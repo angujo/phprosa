@@ -9,10 +9,15 @@
 namespace Angujo\PhpRosa\Form\Controls;
 
 
+use Angujo\PhpRosa\Core\Attribute;
+use Angujo\PhpRosa\Core\Writer;
+use Angujo\PhpRosa\Models\Args;
+
 class Repeat extends ControlCollection
 {
     const ELEMENT = 'repeat';
     private $count;
+    private $noAddRemove;
 
     /**
      * @param int $count
@@ -22,6 +27,35 @@ class Repeat extends ControlCollection
     {
         $this->count = is_numeric($count) ? (int)$count : null;
         return $this;
+    }
+
+    public function noAddRemove()
+    {
+        $this->noAddRemove = 'true()';
+        return $this;
+    }
+
+    private function setAddRemove()
+    {
+        if (!$this->noAddRemove) return;
+        $attr = new Attribute('noAddRemove', Args::ELMT_JAVAROSA, Args::OPENROSA_JAVAROSA);
+        $attr->setContent($this->noAddRemove);
+        $this->attributes[] = $attr;
+    }
+
+    private function setCounter()
+    {
+        if (!$this->count) return;
+        $attr = new Attribute('count', Args::ELMT_JAVAROSA, Args::OPENROSA_JAVAROSA);
+        $attr->setContent($this->count);
+        $this->attributes[] = $attr;
+    }
+
+    public function write(Writer $writer)
+    {
+        $this->setAddRemove();
+        $this->setCounter();
+       return parent::write($writer);
     }
 
 }
