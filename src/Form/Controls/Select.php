@@ -31,6 +31,11 @@ class Select extends Control
         return $this;
     }
 
+    public function addItem($name, $value)
+    {
+        return $this->addOption($name, $value);
+    }
+
     public function write(Writer $writer)
     {
         return parent::write($writer, function (Writer $writer) {

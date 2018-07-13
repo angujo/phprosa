@@ -19,8 +19,6 @@ class Input extends Control
 
     public function write(Writer $writer)
     {
-        return parent::write($writer, function (Writer $writer) {
-            $this->hintwrite($writer);
-        });
+        return parent::write($writer, null);
     }
 }

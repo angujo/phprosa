@@ -13,11 +13,14 @@ use Angujo\PhpRosa\Form\Item;
 
 class Option extends Item
 {
+    const LABEL = 'label';
+    const VALUE = 'value';
+
     public static function create($name, $value)
     {
         $me = new self(null);
-        $me->addNode('label', $name);
-        $me->addNode('value', $value);
+        $me->addNode(self::LABEL, $name);
+        $me->addNode(self::VALUE, $value);
         return $me;
     }
 }

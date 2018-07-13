@@ -65,6 +65,14 @@ class Writer
         return $this->endAttributeNs();
     }
 
+    public function addAttribute(Attribute $attribute)
+    {
+        if (!$this->attribute || !$this->active) return false;
+        $this->active->addAttribute($attribute);
+        $this->attribute = null;
+        return true;
+    }
+
     public function startAttributeNs($prefix, $name, $uri)
     {
         if (!$this->active || $this->attribute) false;
@@ -74,10 +82,7 @@ class Writer
 
     public function endAttributeNs()
     {
-        if (!$this->attribute || !$this->active) return false;
-        $this->active->addAttribute($this->attribute);
-        $this->attribute = null;
-        return true;
+        return $this->addAttribute($this->attribute);
     }
 
     public function startElement($name)

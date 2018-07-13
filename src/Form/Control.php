@@ -11,13 +11,15 @@ namespace Angujo\PhpRosa\Form;
 
 use Angujo\PhpRosa\Core\Writer;
 
-abstract class Control
+abstract class Control implements ControlField
 {
     protected $label;
     protected $hint;
     protected $name;
     protected $output;
-    protected $attributes=[];
+    protected $attributes = [];
+    protected $namespace;
+    protected $uri;
 
     const ELEMENT = 'control';
 
@@ -32,12 +34,12 @@ abstract class Control
         return new static($label, $name);
     }
 
-    protected function labelwrite(Writer $writer)
+    protected function labelWrite(Writer $writer)
     {
-        $writer->writeElement('label', $this->label);
+       if ($this->label) $writer->writeElement('label', $this->label);
     }
 
-    protected function hintwrite(Writer $writer)
+    protected function hintWrite(Writer $writer)
     {
         if ($this->hint) $writer->writeElement('hint', $this->hint);
     }
@@ -49,14 +51,16 @@ abstract class Control
      */
     protected function write(Writer $writer, $closure = null)
     {
-        $writer->startElement(static::ELEMENT);
+        if ($this->namespace) $writer->startElementNs($this->namespace, static::ELEMENT, $this->uri);
+        else $writer->startElement(static::ELEMENT);
         $writer->writeAttribute('ref', $this->name);
-        if (!empty($this->attributes)){
+        if (!empty($this->attributes)) {
             foreach ($this->attributes as $name => $val) {
-                $writer->writeAttribute($name,$val);
+                $writer->writeAttribute($name, $val);
             }
         }
-        $this->labelwrite($writer);
+        $this->labelWrite($writer);
+        $this->hintWrite($writer);
         if (is_callable($closure)) $closure($writer);
         $writer->endElement();
         return $writer;
