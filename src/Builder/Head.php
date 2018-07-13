@@ -9,8 +9,10 @@
 namespace Angujo\PhpRosa\Builder;
 
 
+use Angujo\PhpRosa\Core\Writer;
 use Angujo\PhpRosa\Form\Bind;
 use Angujo\PhpRosa\Form\Instance;
+use Angujo\PhpRosa\Models\Args;
 
 class Head
 {
@@ -22,7 +24,17 @@ class Head
     /** @var Instance|null */
     private $primaryInstance;
 
-    public function __construct() { }
+    const ELEMENT = 'head';
+    const MODEL   = 'model';
+    const TITLE   = 'title';
+    /** @var Body */
+    private $body;
+
+    /**
+     * Head constructor.
+     * @param $body Body
+     */
+    public function __construct($body = null) { $this->body = is_object($body) && is_a($body, Body::class) ? $body : null; }
 
     /**
      * @param mixed $title
@@ -76,7 +88,38 @@ class Head
 
     public function addBinding(Bind $bind)
     {
-        $this->bindings[] = $bind;
+        $this->bindings[] = &$bind;
         return $this;
+    }
+
+    private function parseBody()
+    {
+        //TODO loop through body controls and consolidating the instances
+    }
+
+    /**
+     * @param Writer $writer
+     * @param null|Body $body
+     */
+    public function write(Writer $writer, $body = null)
+    {
+        if (is_object($body) && is_a($body, Body::class)) $this->body = $body;
+        $this->parseBody();
+        $writer->startElementNs(Args::NS_XHTML, self::ELEMENT, Args::URI_XHTML);
+        $writer->writeElementNs(Args::NS_XHTML, self::TITLE, Args::URI_XHTML, $this->title ?: Args::PROJECT);
+        $writer->startElement(self::MODEL);
+        if ($this->primaryInstance) $this->primaryInstance->write($writer);
+        if ($this->bindings) {
+            foreach ($this->bindings as $binding) {
+                $binding->write($writer);
+            }
+        }
+        if ($this->instances) {
+            foreach ($this->instances as $instance) {
+                $instance->write($writer);
+            }
+        }
+        $writer->endElement();
+        $writer->endElement();
     }
 }

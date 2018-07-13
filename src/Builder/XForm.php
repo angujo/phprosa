@@ -42,8 +42,8 @@ class XForm
 
     public function __call($method, $args)
     {
-        if (null === $this->head) $this->head = new Head();
         if (null === $this->body) $this->body = new Body();
+        if (null === $this->head) $this->head = new Head($this->body);
         if (method_exists($this->head, $method)) return call_user_func_array([$this->head, $method], $args);
         if (method_exists($this->body, $method)) return call_user_func_array([$this->body, $method], $args);
         throw new \RuntimeException("Method '$method' is not defined!");

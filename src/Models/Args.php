@@ -11,18 +11,19 @@ namespace Angujo\PhpRosa\Models;
 
 class Args
 {
+    const PROJECT      = 'Angujo PhpRosa';
     const URI_FORMLIST = 'http://openrosa.org/xforms/xformsList';
     const URI_MANIFEST = 'http://openrosa.org/xforms/xformsManifest';
     const URI_RESPONSE = 'http://openrosa.org/http/response';
 
     const URI_W3_XFORMS    = 'http://www.w3.org/2002/xforms';
-    const URI_W3_XHTML     = 'http://www.w3.org/1999/xhtml';
+    const URI_XHTML        = 'http://www.w3.org/1999/xhtml';
     const URI_W3_XMLSCHEMA = 'http://www.w3.org/2001/XMLSchema';
     const URI_JAVAROSA     = 'http://openrosa.org/javarosa';
     const URI_ROSAFORM     = 'http://openrosa.org/xforms';
     const URI_ODKFORMS     = 'http://opendatakit.org/xforms';
 
-    const NS_HTML     = 'h';
+    const NS_XHTML    = 'xh';
     const NS_JAVAROSA = 'jr';
     const NS_ROSAFORM = 'orx';
     const NS_ODKFORM  = 'odk';
