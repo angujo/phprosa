@@ -9,10 +9,11 @@
 namespace Angujo\PhpRosa\Form\Controls;
 
 use Angujo\PhpRosa\Form\Control;
+use Angujo\PhpRosa\Util\Elmt;
 
 class Range extends Control
 {
-    const ELEMENT = 'range';
+    const ELEMENT = Elmt::RANGE;
     private $start;
     private $end;
     private $step;

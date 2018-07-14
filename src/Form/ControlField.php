@@ -12,4 +12,5 @@ namespace Angujo\PhpRosa\Form;
 interface ControlField
 {
    static  function create($lbl,$nm);
+   public function getBinding();
 }

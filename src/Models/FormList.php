@@ -8,6 +8,8 @@
 
 namespace Angujo\PhpRosa\Models;
 
+use Angujo\PhpRosa\Util\Elmt;
+
 
 /**
  * Class FormList
@@ -19,7 +21,7 @@ class FormList
     use TraitGenerator;
     protected $_xmlns = Args::URI_FORMLIST;
     protected $forms  = [];
-    protected $root   = 'xforms';
+    protected $root   = Elmt::FORM_LIST;
 
     /**
      * @param FormInterface $form

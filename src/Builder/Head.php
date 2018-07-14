@@ -12,7 +12,9 @@ namespace Angujo\PhpRosa\Builder;
 use Angujo\PhpRosa\Core\Writer;
 use Angujo\PhpRosa\Form\Bind;
 use Angujo\PhpRosa\Form\Instance;
+use Angujo\PhpRosa\Form\Item;
 use Angujo\PhpRosa\Models\Args;
+use Angujo\PhpRosa\Util\Elmt;
 
 class Head
 {
@@ -24,11 +26,10 @@ class Head
     /** @var Instance|null */
     private $primaryInstance;
 
-    const ELEMENT = 'head';
-    const MODEL   = 'model';
-    const TITLE   = 'title';
     /** @var Body */
     private $body;
+    /** @var Instance */
+    private $instance;
 
     /**
      * Head constructor.
@@ -94,20 +95,40 @@ class Head
 
     private function parseBody()
     {
-        //TODO loop through body controls and consolidating the instances
+        if (!$this->body) return;
+        $bindings = $this->body->getBindings();
+        foreach ($bindings as $binding) {
+            $this->bindings[] = $binding;
+        }
     }
 
     /**
+     * Method to write the defined elements
+     *
      * @param Writer $writer
      * @param null|Body $body
      */
     public function write(Writer $writer, $body = null)
     {
+        $this->wrap($writer, $body);
+    }
+
+    /**
+     * Method to allow addition of extra elements before and after defined elements.
+     *
+     * @param Writer $writer
+     * @param null|Body $body
+     * @param \Closure|null $after Called before any element in MODEL
+     * @param \Closure|null $before Called after all elements in MODEL
+     */
+    public function wrap(Writer $writer, $body = null, \Closure $after = null, \Closure $before = null)
+    {
         if (is_object($body) && is_a($body, Body::class)) $this->body = $body;
         $this->parseBody();
-        $writer->startElementNs(Args::NS_XHTML, self::ELEMENT, Args::URI_XHTML);
-        $writer->writeElementNs(Args::NS_XHTML, self::TITLE, Args::URI_XHTML, $this->title ?: Args::PROJECT);
-        $writer->startElement(self::MODEL);
+        $writer->startElementNs(Args::NS_XHTML, Elmt::HEAD, Args::URI_XHTML);
+        $writer->writeElementNs(Args::NS_XHTML, Elmt::TITLE, Args::URI_XHTML, $this->title ?: Args::PROJECT);
+        $writer->startElement(Elmt::MODEL);
+        if (is_callable($before)) $before($writer);
         if ($this->primaryInstance) $this->primaryInstance->write($writer);
         if ($this->bindings) {
             foreach ($this->bindings as $binding) {
@@ -119,7 +140,27 @@ class Head
                 $instance->write($writer);
             }
         }
+        if (is_callable($after)) $after($writer);
         $writer->endElement();
         $writer->endElement();
+    }
+
+    public function startInstance($id, $root = 'root')
+    {
+        if ($this->instance) $this->addInstance($this->instance);
+        $this->instance = Instance::create($id, $root);
+    }
+
+    public function addItem(Item $item)
+    {
+        if (!$this->instance) return;
+        $this->instance->addItem($item);
+    }
+
+    public function endInstance()
+    {
+        if (!$this->instance) return;
+        $this->addInstance($this->instance);
+        $this->instance = null;
     }
 }

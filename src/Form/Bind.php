@@ -8,6 +8,7 @@
 
 namespace Angujo\PhpRosa\Form;
 
+use Angujo\PhpRosa\Models\Args;
 use Angujo\PhpRosa\Util\Strings;
 use Angujo\PhpRosa\Core\Writer;
 
@@ -21,11 +22,11 @@ use Angujo\PhpRosa\Core\Writer;
  * @property $constraint
  * @property $calculate
  * @property $save_incomplete
- * @property $jr_required_msg
- * @property $jr_constraint_msg
- * @property $jr_preload
- * @property $jr_preload_params
- * @property $orx_max_pixels
+ * @property $required_msg
+ * @property $constraint_msg
+ * @property $preload
+ * @property $preload_params
+ * @property $max_pixels
  */
 class Bind
 {
@@ -38,11 +39,11 @@ class Bind
         'constraint',
         'calculate',
         'saveIncomplete',
-        'jr:requiredMsg',
-        'jr:constraintMsg',
-        'jr:preload',
-        'jr:preloadParams',
-        'orx:max-pixels',
+        Args::NS_JAVAROSA . ':requiredMsg',
+        Args::NS_JAVAROSA . ':constraintMsg',
+        Args::NS_JAVAROSA . ':preload',
+        Args::NS_JAVAROSA . ':preloadParams',
+        Args::NS_ROSAFORM . ':max-pixels',
     ];
 
     private $values = [];
@@ -68,6 +69,12 @@ class Bind
         if (empty($this->stringed)) return $writer;
         $writer->startElement('bind');
         foreach ($this->stringed as $attr => $value) {
+            if (false !== strpos($attr, ':')) {
+                $sp = explode(':', $attr);
+                $ns = 0 === strcmp(Args::NS_ROSAFORM, $sp[0]) ? Args::URI_ROSAFORM : Args::URI_JAVAROSA;
+                $writer->writeElementNs($sp[0], $sp[1], $ns, $value);
+                continue;
+            }
             $writer->writeAttribute($attr, $value);
         }
         $writer->endElement();
@@ -83,6 +90,8 @@ class Bind
     public function slugged($property)
     {
         foreach ($this->attributes as $attribute) {
+            $attribute = explode(':', $attribute);
+            $attribute = count($this->attributes) > 1 ? $attribute[1] : $attribute[0];
             if (strcmp(Strings::slugify($attribute, [], '_'), $property) === 0) {
                 $property = $attribute;
                 break;

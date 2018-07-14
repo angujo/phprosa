@@ -20,8 +20,8 @@ class Attribute extends XMLElement
      */
     public function getElement()
     {
-        if (!isset(Writer::$elements[$this->element])) return null;
-        return Writer::$elements[$this->element];
+        if (!isset(Session::$elements[$this->element])) return null;
+        return Session::$elements[$this->element];
     }
 
     /**

@@ -5,6 +5,7 @@
  * Date: 2018-07-07
  * Time: 9:42 AM
  */
+
 namespace Angujo\PhpRosa\Form;
 
 class Data
@@ -22,6 +23,8 @@ class Data
     const TYPE_BINARY   = 'binary';
     const TYPE_BARCODE  = 'barcode';
     const TYPE_INTENT   = 'intent';
+    const TYPE_EMAIL    = 'email';
+    const TYPE_URL      = 'url';
 
     /**
      * @return array

@@ -30,7 +30,7 @@ class Element extends XMLElement
      */
     public function getChildren()
     {
-        return array_filter(array_map(function ($child) { return isset(Writer::$elements[$child]) ? Writer::$elements[$child] : null; }, $this->children));
+        return array_filter(array_map(function ($child) { return isset(Session::$elements[$child]) ? Session::$elements[$child] : null; }, $this->children));
     }
 
     /**
@@ -56,8 +56,8 @@ class Element extends XMLElement
      */
     public function getParent()
     {
-        if (!isset(Writer::$elements[$this->parent])) return null;
-        return Writer::$elements[$this->parent];
+        if (!isset(Session::$elements[$this->parent])) return null;
+        return Session::$elements[$this->parent];
     }
 
     /**
@@ -83,12 +83,12 @@ class Element extends XMLElement
         foreach ($this->attributes as $attribute) {
             $attribute->xml($writer);
         }
-        if (!empty($this->children)){
+        if (!empty($this->children)) {
             $elements = $this->getChildren();
             foreach ($elements as $element) {
                 $element->xml($writer);
             }
-        }elseif ($this->content){
+        } elseif ($this->content) {
             $writer->text($this->content);
         }
         $writer->endElement();

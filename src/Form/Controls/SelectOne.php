@@ -11,14 +11,15 @@ namespace Angujo\PhpRosa\Form\Controls;
 
 use Angujo\PhpRosa\Form\Control;
 use Angujo\PhpRosa\Form\ItemsList;
+use Angujo\PhpRosa\Util\Elmt;
 
 class SelectOne extends Select
 {
-    const ELEMENT = 'select1';
+    const ELEMENT = Elmt::SELECT_ONE;
 
-    protected function __construct($label,$n)
+    protected function __construct($label, $n)
     {
-        parent::__construct($label,$n);
+        parent::__construct($label, $n);
         $this->options = ItemsList::create(null);
     }
 }

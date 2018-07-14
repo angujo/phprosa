@@ -11,8 +11,6 @@ namespace Angujo\PhpRosa\Core;
 
 class Writer
 {
-    /** @var Element[] */
-    public static $elements = [];
     /** @var Element */
     private $active;
     /** @var Attribute */
@@ -98,7 +96,7 @@ class Writer
             $element->setParent($this->active);
         }
         $this->active = $element;
-        self::$elements[$this->active->id] = $this->active;
+        Session::$elements[$this->active->id] = $this->active;
         if (!$this->root) $this->root = $this->active;
         return true;
     }
