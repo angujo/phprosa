@@ -36,6 +36,7 @@ class Attribute extends XMLElement
 
     public function xml(\XMLWriter $writer)
     {
+        parent::preXml($this->attributes);
         if ($this->namespace) {
             $writer->writeAttributeNS($this->namespace, $this->name, $this->namespace_path, $this->content);
             return $writer;

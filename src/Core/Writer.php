@@ -75,6 +75,7 @@ class Writer
     {
         if (!$this->active || $this->attribute) false;
         $this->attribute = new Attribute($name, $prefix, $uri);
+        if ($prefix && $uri) $this->setNamespace($this->active->id, $prefix, $uri);
         return true;
     }
 

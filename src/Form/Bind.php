@@ -9,6 +9,7 @@
 namespace Angujo\PhpRosa\Form;
 
 use Angujo\PhpRosa\Models\Args;
+use Angujo\PhpRosa\Util\Elmt;
 use Angujo\PhpRosa\Util\Strings;
 use Angujo\PhpRosa\Core\Writer;
 
@@ -67,12 +68,12 @@ class Bind
     public function write(Writer $writer)
     {
         if (empty($this->stringed)) return $writer;
-        $writer->startElement('bind');
+        $writer->startElement(Elmt::BIND);
         foreach ($this->stringed as $attr => $value) {
             if (false !== strpos($attr, ':')) {
                 $sp = explode(':', $attr);
                 $ns = 0 === strcmp(Args::NS_ROSAFORM, $sp[0]) ? Args::URI_ROSAFORM : Args::URI_JAVAROSA;
-                $writer->writeElementNs($sp[0], $sp[1], $ns, $value);
+                $writer->writeAttributeNs($sp[0], $sp[1], $ns, $value);
                 continue;
             }
             $writer->writeAttribute($attr, $value);
@@ -90,10 +91,15 @@ class Bind
     public function slugged($property)
     {
         foreach ($this->attributes as $attribute) {
-            $attribute = explode(':', $attribute);
-            $attribute = count($this->attributes) > 1 ? $attribute[1] : $attribute[0];
-            if (strcmp(Strings::slugify($attribute, [], '_'), $property) === 0) {
+            $attr = explode(':', $attribute);
+            $c=count($attr);
+            $attr = Strings::camelCaseToSnake(count($attr) > 1 ? $attr[1] : $attr[0]);
+            if ($c>1){
+               // var_dump($property,$attr,$attribute);die;
+            }
+            if (strcmp($attr, $property) === 0) {
                 $property = $attribute;
+
                 break;
             }
         }

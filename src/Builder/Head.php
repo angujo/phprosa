@@ -96,6 +96,7 @@ class Head
     private function parseBody()
     {
         if (!$this->body) return;
+        $this->body->optimize();
         $bindings = $this->body->getBindings();
         foreach ($bindings as $binding) {
             $this->bindings[] = $binding;

@@ -9,6 +9,8 @@
 namespace Angujo\PhpRosa\Core;
 
 
+use Angujo\PhpRosa\Models\Args;
+
 abstract class XMLElement
 {
     public    $id;
@@ -41,5 +43,14 @@ abstract class XMLElement
     {
         $this->content = $content;
         return $this;
+    }
+
+    public function preXml(&$attributes){
+        if (array_key_exists($this->id, Session::$xml_namespaces)) {
+            foreach (Session::$xml_namespaces[$this->id] as $prefix => $uri) {
+                $attributes[] = (new Attribute(Args::XMLNS.':'.$prefix, null, null))->setContent($uri);
+            }
+        }
+        $this->namespace_path = null;
     }
 }
