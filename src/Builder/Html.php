@@ -24,7 +24,7 @@ class Html
 
     private $processed = false;
 
-    public function __construct(Writer $writer = null) { $this->writer = $writer ? new Writer() : $writer; }
+    public function __construct(Writer $writer = null) { $this->writer = $writer ?: new Writer(); }
 
     /**
      * @param mixed $body
@@ -66,8 +66,9 @@ class Html
         if ($writer) $this->writer = $writer;
         if (!$this->writer) return $this;
         $this->writer->startElementNs(Args::NS_XHTML, Elmt::HTML, Args::URI_XHTML);
-        if (is_callable($header)) $header($writer);
-        if (is_callable($body)) $body($writer);
+        $this->writer->writeAttribute(Args::XMLNS,Args::URI_XFORMS);
+        if (is_callable($header)) $header($this->writer);
+        if (is_callable($body)) $body($this->writer);
         $this->writer->endElement();
         $this->processed = true;
         return $this;

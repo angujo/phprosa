@@ -10,6 +10,7 @@ namespace Angujo\PhpRosa\Core;
 
 
 use Angujo\PhpRosa\Core\Writer;
+use Angujo\PhpRosa\Models\Args;
 
 class Element extends XMLElement
 {
@@ -72,6 +73,12 @@ class Element extends XMLElement
 
     public function xml(\XMLWriter $writer)
     {
+        if (array_key_exists($this->id, Session::$xml_namespaces)) {
+            foreach (Session::$xml_namespaces[$this->id] as $prefix => $uri) {
+                   $this->attributes[] = (new Attribute(Args::XMLNS.':'.$prefix, null, null))->setContent($uri);
+            }
+        }
+        $this->namespace_path = null;
         if (empty($this->children) && empty($this->attributes)) {
             if ($this->namespace) {
                 $writer->writeElementNS($this->namespace, $this->name, $this->namespace_path, $this->content);

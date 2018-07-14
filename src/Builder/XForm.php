@@ -51,7 +51,7 @@ class XForm
 
     public function __construct(Html $html = null, Writer $writer = null)
     {
-        $this->html = $html ? new Html($writer) : $html;
+        $this->html = $html ?: new Html($writer);
     }
 
     /**
@@ -85,6 +85,8 @@ class XForm
 
     public function write(Writer $writer = null)
     {
+        if (!$this->body) $this->body = new Body();
+        if (!$this->head) $this->head = new Head();
         $this->html->setBody($this->body);
         $this->html->setHead($this->head);
         $this->processed = true;

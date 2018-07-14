@@ -16,7 +16,7 @@ class Args
     const URI_MANIFEST = 'http://openrosa.org/xforms/xformsManifest';
     const URI_RESPONSE = 'http://openrosa.org/http/response';
 
-    const URI_W3_XFORMS    = 'http://www.w3.org/2002/xforms';
+    const URI_XFORMS    = 'http://www.w3.org/2002/xforms';
     const URI_XHTML        = 'http://www.w3.org/1999/xhtml';
     const URI_W3_XMLSCHEMA = 'http://www.w3.org/2001/XMLSchema';
     const URI_JAVAROSA     = 'http://openrosa.org/javarosa';

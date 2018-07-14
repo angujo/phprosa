@@ -91,6 +91,7 @@ class Writer
     public function startElementNs($prefix, $name, $uri)
     {
         $element = new Element($name, $prefix, $uri);
+        if ($prefix && $uri) $this->setNamespace($element->id, $prefix, $uri);
         if ($this->active) {
             $this->active->addElement($element);
             $element->setParent($this->active);
@@ -130,5 +131,13 @@ class Writer
     {
         if (!$this->root) return;
         $this->root->xml($writer);
+    }
+
+    private function setNamespace($id, $prefix, $uri, $holder = false)
+    {
+        if (empty(Session::$xml_namespaces) || $holder) {
+            Session::$active_holder = $id;
+        }
+        Session::$xml_namespaces[Session::$active_holder][$prefix] = $uri;
     }
 }

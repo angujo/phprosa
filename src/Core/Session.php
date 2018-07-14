@@ -13,4 +13,9 @@ class Session
 {
     /** @var Element[] */
     public static $elements = [];
+    /** @var array */
+    public static $xml_namespaces = [];
+    public static $active_holder;
+    /** @var array */
+    public static $xml_namespaces_holders = [];
 }
