@@ -92,14 +92,9 @@ class Bind
     {
         foreach ($this->attributes as $attribute) {
             $attr = explode(':', $attribute);
-            $c=count($attr);
             $attr = Strings::camelCaseToSnake(count($attr) > 1 ? $attr[1] : $attr[0]);
-            if ($c>1){
-               // var_dump($property,$attr,$attribute);die;
-            }
             if (strcmp($attr, $property) === 0) {
                 $property = $attribute;
-
                 break;
             }
         }
@@ -120,8 +115,9 @@ class Bind
             case 'type':
                 return in_array($value, Data::types(), false) ? $value : Data::TYPE_STRING;
                 break;
-            case 'readonly':
             case 'required':
+                if (!$this->required_msg && $value) $this->required_msg='This field is required!';
+            case 'readonly':
             case 'relevant':
             case 'saveIncomplete':
                 return $value ? 'true()' : 'false()';

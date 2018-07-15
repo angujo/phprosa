@@ -13,6 +13,7 @@ use Angujo\PhpRosa\Core\Attribute;
 use Angujo\PhpRosa\Core\Writer;
 use Angujo\PhpRosa\Form\Control;
 use Angujo\PhpRosa\Form\ControlField;
+use Angujo\PhpRosa\Util\Strings;
 
 abstract class ControlCollection implements GroupRepeat
 {
@@ -20,17 +21,21 @@ abstract class ControlCollection implements GroupRepeat
     protected $no_repeat = false;
 
     protected $label;
-    /** @var ControlField[]|GroupRepeat[] */
+    /** @var ControlField[]|ControlCollection[] */
     protected $controls = [];
     /** @var GroupRepeat */
     protected $parent;
     /** @var Attribute[] */
     protected $attributes = [];
     const ELEMENT = 'collector';
+    protected $xpath = [];
+    private   $name;
 
     protected function __construct($ref, $label)
     {
-        if ($ref) $this->attributes[] = new Attribute('ref', $ref);
+        // if ($ref) $this->attributes[] = new Attribute('ref', $ref);
+        $this->name = $ref ?: 'group_'.Strings::random('a',8,true);
+        $this->xpath[] = $this->name;
         $this->label = $label;
         $this->id = uniqid('id', false);
     }
@@ -40,9 +45,10 @@ abstract class ControlCollection implements GroupRepeat
         return new static($ref, $label);
     }
 
-    public function addControl(ControlField $control)
+    public function addControl(Control $control)
     {
-        $this->controls[] = $control;
+        $control->setXpath($this->xpath);
+        $this->controls[] = &$control;
         return $this;
     }
 
@@ -52,7 +58,8 @@ abstract class ControlCollection implements GroupRepeat
         if ($this->no_repeat && strcmp($repeat::ELEMENT, Repeat::ELEMENT) === 0) return $this;
         $repeat->setNoRepeat($this->no_repeat || strcmp($repeat::ELEMENT, Repeat::ELEMENT) === 0);
         $repeat->setParent($this);
-        $this->controls[] = $repeat;
+        $repeat->setXpath($this->xpath);
+        $this->controls[] = &$repeat;
         return $this;
     }
 
@@ -91,10 +98,28 @@ abstract class ControlCollection implements GroupRepeat
         foreach ($this->attributes as $attribute) {
             $writer->addAttribute($attribute);
         }
-        if ($this->label) $writer->writeElement('label',$this->label);
+        if ($this->label) $writer->writeElement('label', $this->label);
         foreach ($this->controls as $control) {
             $control->write($writer);
         }
         $writer->endElement();
+    }
+
+    /**
+     * @param array $xpath
+     * @return ControlCollection
+     */
+    public function setXpath(array $xpath)
+    {
+        $this->xpath = array_merge($this->xpath, $xpath);
+        return $this;
+    }
+
+    /**
+     * @return Control[]|ControlCollection[]
+     */
+    public function getControls()
+    {
+        return $this->controls;
     }
 }

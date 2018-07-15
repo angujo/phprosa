@@ -9,11 +9,12 @@
 namespace Angujo\PhpRosa\Form\Controls;
 
 
+use Angujo\PhpRosa\Form\Control;
 use Angujo\PhpRosa\Form\ControlField;
 
 interface GroupRepeat
 {
-    function addControl(ControlField $field);
+    function addControl(Control $field);
 
     function addGroup(ControlCollection $repeat);
 

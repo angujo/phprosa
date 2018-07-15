@@ -38,6 +38,13 @@ class Input extends Control
     const ELEMENT = 'input';
     private static $types = [Data::TYPE_EMAIL => 'string', Data::TYPE_URL => 'string',];
 
+    public static function create($label, $name)
+    {
+        $me = parent::create($label, $name);
+        $me->type = Data::TYPE_STRING;
+        return $me;
+    }
+
     public static function integer($label, $name)
     {
         $me = self::int($label, $name);
@@ -55,7 +62,7 @@ class Input extends Control
         $_name = array_key_exists($name, array_keys(self::$types)) ? self::$types[$name] : $name;
         $me->type = strtolower($_name);
         unset($arguments[0], $arguments[1]);
-        if (!empty($arguments)) self::bind($name, $me, $arguments);
+       self::bind($name, $me, $arguments);
         return $me;
     }
 
@@ -63,7 +70,7 @@ class Input extends Control
     {
         switch ($name) {
             case Data::TYPE_DECIMAL:
-                $pl = (int)$arguments[0];
+                $pl = ((int)array_shift($arguments))?:6;
                 $me->constraint = "regex(.,'^([1-9])([0-9]+)?(\.([0-9]{0,$pl}))?$')";
                 break;
             case Data::TYPE_EMAIL:

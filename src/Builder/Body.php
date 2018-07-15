@@ -18,9 +18,12 @@ use Angujo\PhpRosa\Form\Controls\Group;
 use Angujo\PhpRosa\Form\Controls\GroupRepeat;
 use Angujo\PhpRosa\Form\Controls\Repeat;
 use Angujo\PhpRosa\Form\Controls\Select;
+use Angujo\PhpRosa\Form\Instance;
+use Angujo\PhpRosa\Form\ItemSet;
 use Angujo\PhpRosa\Form\ItemsList;
 use Angujo\PhpRosa\Models\Args;
 use Angujo\PhpRosa\Util\Elmt;
+use Angujo\PhpRosa\Util\Strings;
 
 /**
  * Class Body
@@ -28,7 +31,7 @@ use Angujo\PhpRosa\Util\Elmt;
  */
 class Body
 {
-    /** @var ControlField[]|GroupRepeat[]|Control[] */
+    /** @var Control[]|GroupRepeat[]|Control[] */
     private $controls = [];
     /** @var Group|Repeat */
     private $open_group;
@@ -40,18 +43,47 @@ class Body
 
     public function __construct() { }
 
-    public function optimize()
+    public function optimize(Instance $primaryInstance, array &$instances = [])
     {
         foreach ($this->controls as $control) {
-            if (is_subclass_of($control, Select::class)) {
-            } elseif (is_subclass_of($control, Control::class)) {
-                if ($control->getBinding()) $this->bindings[] = $control->getBinding();
-            }
+            $this->doOptimization($control, $primaryInstance, $instances);
         }
     }
 
-    public function addControl(ControlField $control)
+    /**
+     * @param Control|ControlCollection|Select $control
+     * @param Instance $primaryInstance
+     */
+    private function doOptimization($control, Instance $primaryInstance, array &$instances)
     {
+        if (is_subclass_of($control, Control::class)) {
+            if ($control->getBinding()) $this->bindings[] = $control->getBinding();
+            $primaryInstance->addField($control);
+        } elseif (is_subclass_of($control, ControlCollection::class)) {
+            $this->optimizeCollection($control, $primaryInstance, $instances);
+        }
+        if (is_a($control, Select::class) || is_subclass_of($control, Select::class)) {
+           // $instance = Instance::create(Strings::random('a',6,true));
+            //$instance->setItemsList($control->getOptions());
+           // $set = ItemSet::create($instance->itemSetReference());
+          //  $control->setItemSet($set);
+          //  $instances[] =& $instance;
+        }
+    }
+
+    private function optimizeCollection(ControlCollection $collection, Instance $primaryInstance, array &$instances)
+    {
+        foreach ($collection->getControls() as $control) {
+            $this->doOptimization($control, $primaryInstance, $instances);
+        }
+    }
+
+    public function addControl(Control $control)
+    {
+        if ($this->open_group) {
+            $this->open_group->addControl($control);
+            return $this;
+        }
         $this->controls[] = $control;
         return $this;
     }
@@ -102,6 +134,7 @@ class Body
     {
         if ($this->open_group) {
             $collection->setParent($this->open_group);
+            $this->open_group->addGroup($collection);
         }
         $this->open_group = $collection;
         return $this;

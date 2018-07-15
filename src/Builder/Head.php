@@ -96,7 +96,11 @@ class Head
     private function parseBody()
     {
         if (!$this->body) return;
-        $this->body->optimize();
+        if (!$this->primaryInstance){
+            $this->primaryInstance = Instance::create('data-id-here');
+            $this->primaryInstance->setPrimary();
+        }
+        $this->body->optimize($this->primaryInstance,$this->instances);
         $bindings = $this->body->getBindings();
         foreach ($bindings as $binding) {
             $this->bindings[] = $binding;

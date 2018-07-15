@@ -36,6 +36,8 @@ abstract class Control implements ControlField
     protected $attributes = [];
     protected $namespace;
     protected $uri;
+    protected $default_value;
+    protected $xpath      = [];
 
     /** @var Bind */
     protected $binding;
@@ -80,7 +82,9 @@ abstract class Control implements ControlField
     {
         if ($this->namespace) $writer->startElementNs($this->namespace, static::ELEMENT, $this->uri);
         else $writer->startElement(static::ELEMENT);
-        $writer->writeAttribute('ref', $this->name);
+        $refs = $this->xpath;
+        $refs[] = $this->name;
+        $writer->writeAttribute('ref', implode('/', $refs));
         if (!empty($this->attributes)) {
             foreach ($this->attributes as $name => $val) {
                 $writer->writeAttribute($name, $val);
@@ -127,5 +131,65 @@ abstract class Control implements ControlField
     {
         if (!$this->binding) return null;
         return $this->binding->{$name};
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param mixed $default_value
+     * @return Control
+     */
+    public function setDefaultValue($default_value)
+    {
+        $this->default_value = $default_value;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDefaultValue()
+    {
+        return $this->default_value;
+    }
+
+    /**
+     * @param string $xpath
+     * @return Control
+     */
+    public function addXpath($xpath)
+    {
+        $this->xpath[] = $xpath;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getXpath()
+    {
+        return $this->xpath;
+    }
+
+    /**
+     * @param array $xpath
+     * @return Control
+     */
+    public function setXpath(array $xpath)
+    {
+        $this->xpath = $xpath;
+        return $this;
+    }
+
+    public function setRootPath($root)
+    {
+        array_unshift($this->xpath, $root);
+        return $this;
     }
 }

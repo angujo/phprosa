@@ -9,6 +9,7 @@
 namespace Angujo\PhpRosa\Form;
 
 use Angujo\PhpRosa\Models\Args;
+use Angujo\PhpRosa\Util\Elmt;
 use Angujo\PhpRosa\Util\Strings;
 use Angujo\PhpRosa\Core\Writer;
 
@@ -52,11 +53,42 @@ class Instance
         return new self($root, $id);
     }
 
-    public function addFieldName($name, $xpath = null, $value = null)
+    public function addField(Control $control)
     {
-        $this->recent_path = (null === $xpath && null === $this->recent_path) ? $this->default_path : (null === $xpath ? $this->recent_path : $xpath);
-        $this->field_paths[$this->recent_path][] = FieldSummary::create($name, $value);
+        $this->checkRoot();
+        $control->setRootPath($this->root);
+        $this->setRecentPath($control->getXpath());
+        $this->field_paths[$this->recent_path][] = FieldSummary::create($control->getName(), $control->getDefaultValue());
         return $this;
+    }
+
+    private function checkRoot()
+    {
+        if ($this->primary) {
+            $this->root = strcmp('root', $this->root) === 0 ? 'data' : $this->root;
+        }
+    }
+
+    public function addFieldName($name_reference, $value = null)
+    {
+        $this->checkRoot();
+        $name_reference = $this->fieldPath($name_reference);
+        $this->field_paths[$this->recent_path][] = FieldSummary::create($name_reference, $value);
+        return $this;
+    }
+
+    private function fieldPath($name)
+    {
+        $paths = array_filter(preg_split('/[^a-zA-Z\-_]/', $name));
+        $name = array_pop($paths);
+        $this->setRecentPath($paths);
+        return $name;
+    }
+
+    private function setRecentPath(array $paths)
+    {
+        $xpath = implode('/', $paths) ?: null;
+        $this->recent_path = (null === $xpath) ? $this->default_path : $xpath;
     }
 
     public function __set($property, $value)
@@ -101,13 +133,9 @@ class Instance
     public function write(Writer $writer)
     {
         if (!$this->primary && count($this->listItem)) return $this->listing($writer);
-        $root = $this->root;
-        if ($this->primary) {
-            $root = strcmp('root', $this->root) === 0 ? 'data' : $this->root;
-        }
         $writer->startElement($this->element);
         if (!$this->primary) $this->setAttributes($writer);
-        $writer->startElement($root);
+        $writer->startElement($this->root);
         if ($this->primary) $this->setAttributes($writer);
         $this->setXPath($writer);
         if ($this->primary && $this->meta) $this->meta->write($writer);
@@ -131,9 +159,12 @@ class Instance
 
     private function listing(Writer $writer)
     {
+        $this->listItem->nullifyRoot();
         $writer->startElement($this->element);
-        $writer->writeAttribute('id',$this->id);
+        $writer->writeAttribute('id', $this->id);
+        $writer->startElement($this->root);
         $this->listItem->write($writer);
+        $writer->endElement();
         $writer->endElement();
         return $writer;
     }
@@ -155,7 +186,7 @@ class Instance
         }
         $output = [];
         foreach ($this->field_paths as $field_path => $values) {
-            $paths = implode('.', array_filter(array_map('trim', explode('.', $field_path))));
+            $paths = implode('.', array_filter(array_map('trim', explode('.', str_replace('/', '.', $field_path)))));
             Strings::dottedToArray($output, $paths, $values);
         }
         $this->xPath($output, $writer);
@@ -163,19 +194,29 @@ class Instance
 
     private function xPath(array $entries, Writer $writer)
     {
+        $i = 0;
         foreach ($entries as $m => $entry) {
-            if (is_array($entry)) {
+            if (!$i && strcmp($m, $this->root) === 0) {
+                $this->xPath($entry, $writer);
+            } elseif (is_array($entry)) {
                 $writer->startElement($m);
                 $this->xPath($entry, $writer);
                 $writer->endElement();
             } else {
                 $entry->write($writer);
             }
+            $i++;
         }
     }
 
     private function valid($property)
     {
         if (!array_key_exists($property, $this->attributes)) throw new \RuntimeException("'$property' is invalid!");
+    }
+
+    public function itemSetReference()
+    {
+        if ($this->primary || !$this->listItem) return null;
+        return "instance('$this->id')/$this->root/" . Elmt::ITEM;
     }
 }

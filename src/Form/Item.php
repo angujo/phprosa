@@ -10,6 +10,7 @@ namespace Angujo\PhpRosa\Form;
 
 
 use Angujo\PhpRosa\Core\Writer;
+use Angujo\PhpRosa\Util\Elmt;
 
 class Item
 {
@@ -22,7 +23,7 @@ class Item
         $this->id = $id;
     }
 
-    public static function create($id)
+    public static function create($id,$val=null)
     {
         return new self($id);
     }
@@ -36,7 +37,7 @@ class Item
     public function write(Writer $writer)
     {
         if (empty($this->nodes)) return $writer;
-        $writer->startElement('item');
+        $writer->startElement(Elmt::ITEM);
         if (null !== $this->id) $writer->writeElement($this->itext, $this->id);
         foreach ($this->nodes as $name => $value) {
             $writer->writeElement($name, $value);

@@ -32,7 +32,8 @@ class Strings
         return $clean;
     }
 
-   public static function camelCaseToSnake($input) {
+    public static function camelCaseToSnake($input)
+    {
         preg_match_all('!([A-Z][A-Z0-9]*(?=$|[A-Z][a-z0-9])|[A-Za-z][a-z0-9]+)!', $input, $matches);
         $ret = $matches[0];
         foreach ($ret as &$match) {
@@ -50,5 +51,33 @@ class Strings
         }
 
         $arr = $value;
+    }
+
+    /**
+     * @param bool|string $alpha_numeric either TRUE, 'A','N'
+     * @param int $length
+     * @param null|bool $lowercase NULL=both, TRUE=lower, FALSE=upper
+     * @return string
+     */
+    public static function random($alpha_numeric = true, $length = 8,$lowercase=null)
+    {
+        $characters = [];
+        $length = ($length = (int)$length) <= 0 ? 8 : $length;
+        $alpha_numeric = true === $alpha_numeric ? 't' : $alpha_numeric;
+        if (0 !== strcmp($alpha_numeric, 'n')) {
+            if (true!==$lowercase) $characters = array_merge($characters, range('A', 'Z'));
+            if (false!==$lowercase) $characters = array_merge($characters, range('a', 'z'));
+
+        }
+        if (0 !== strcmp($alpha_numeric, 'a')) {
+            $characters = array_merge($characters, range(0, 9));
+        }
+
+        $str = '';
+        shuffle($characters);
+        while (strlen($str) < $length) {
+            $str .= $characters[mt_rand(0, count($characters) - 1)];
+        }
+        return $str;
     }
 }

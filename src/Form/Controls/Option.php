@@ -16,7 +16,7 @@ class Option extends Item
     const LABEL = 'label';
     const VALUE = 'value';
 
-    public static function create($name, $value)
+    public static function create($name, $value=null)
     {
         $me = new self(null);
         $me->addNode(self::LABEL, $name);

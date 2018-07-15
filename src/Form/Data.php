@@ -25,12 +25,19 @@ class Data
     const TYPE_INTENT   = 'intent';
     const TYPE_EMAIL    = 'email';
     const TYPE_URL      = 'url';
+    const TYPE_AUDIO    = 'audio';
+    const TYPE_VIDEO    = 'video';
+    const TYPE_FILE     = 'file';
+    const TYPE_PICTURE  = 'picture';
+    const TYPE_IMAGE    = self::TYPE_PICTURE;
+
+    private static $types = [Data::TYPE_EMAIL => 'string', Data::TYPE_URL => 'string',];
 
     /**
      * @return array
      */
     public static function types()
     {
-        return (new \ReflectionClass(__CLASS__))->getConstants();
+        return array_filter((new \ReflectionClass(__CLASS__))->getConstants(), function ($t) { return !array_key_exists($t, self::$types); });
     }
 }
