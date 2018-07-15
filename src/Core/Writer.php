@@ -128,6 +128,12 @@ class Writer
         return $writer->outputMemory(TRUE);
     }
 
+    public function json_array()
+    {
+        if (!$this->root) return [];
+        return $this->root->json_array();
+    }
+
     private function toXml(\XMLWriter $writer)
     {
         if (!$this->root) return;

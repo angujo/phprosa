@@ -10,13 +10,17 @@ namespace Angujo\PhpRosa\Form\Controls;
 
 
 use Angujo\PhpRosa\Core\Attribute;
+use Angujo\PhpRosa\Core\TraitArray;
 use Angujo\PhpRosa\Core\Writer;
 use Angujo\PhpRosa\Form\Control;
 use Angujo\PhpRosa\Form\ControlField;
+use Angujo\PhpRosa\Form\TraitBind;
 use Angujo\PhpRosa\Util\Strings;
 
 abstract class ControlCollection implements GroupRepeat
 {
+    use TraitArray, TraitBind;
+
     public    $id;
     protected $no_repeat = false;
 
@@ -34,10 +38,12 @@ abstract class ControlCollection implements GroupRepeat
     protected function __construct($ref, $label)
     {
         // if ($ref) $this->attributes[] = new Attribute('ref', $ref);
-        $this->name = $ref ?: 'group_'.Strings::random('a',8,true);
+        $this->name = $ref ?: 'group_' . Strings::random('a', 8, true);
         $this->xpath[] = $this->name;
         $this->label = $label;
         $this->id = uniqid('id', false);
+        $this->for_array = ['label', 'binding', 'xpath', 'attributes', 'controls'];
+        $this->type = static::ELEMENT;
     }
 
     public static function create($ref = null, $label = null)
@@ -122,4 +128,5 @@ abstract class ControlCollection implements GroupRepeat
     {
         return $this->controls;
     }
+
 }

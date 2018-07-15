@@ -9,26 +9,17 @@
 namespace Angujo\PhpRosa\Form;
 
 
+use Angujo\PhpRosa\Core\TraitArray;
 use Angujo\PhpRosa\Core\Writer;
 
 /**
  * Class Control
  * @package Angujo\PhpRosa\Form
- *
- * @property $readonly
- * @property $required
- * @property $relevant
- * @property $constraint
- * @property $calculate
- * @property $save_incomplete
- * @property $required_msg
- * @property $constraint_msg
- * @property $preload
- * @property $preload_params
- * @property $max_pixels
  */
 abstract class Control implements ControlField
 {
+    use TraitArray,TraitBind;
+
     protected $label;
     protected $hint;
     protected $name;
@@ -38,9 +29,6 @@ abstract class Control implements ControlField
     protected $uri;
     protected $default_value;
     protected $xpath      = [];
-
-    /** @var Bind */
-    protected $binding;
 
     const ELEMENT = 'control';
 
@@ -97,41 +85,7 @@ abstract class Control implements ControlField
         return $writer;
     }
 
-    /*
-     * Below we'll extend the Bind for the control
-     */
 
-    /**
-     * @param $property
-     * @param $value
-     */
-    public function __set($property, $value)
-    {
-        if (!$this->binding) {
-            $this->binding = new Bind();
-            $this->binding->nodeset = $this->name;
-        }
-        $this->binding->{$property} = $value;
-    }
-
-    /**
-     * @param $name
-     * @return bool
-     */
-    public function __isset($name)
-    {
-        return $this->binding && isset($this->binding->{$name});
-    }
-
-    /**
-     * @param $name
-     * @return mixed|null
-     */
-    public function __get($name)
-    {
-        if (!$this->binding) return null;
-        return $this->binding->{$name};
-    }
 
     /**
      * @return mixed

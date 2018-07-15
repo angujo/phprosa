@@ -93,6 +93,12 @@ class XForm
         return $this->html->write($writer);
     }
 
+    public function json_array()
+    {
+        if (!$this->processed) $this->write();
+        return $this->html->json_array();
+    }
+
     public function xml()
     {
         if (!$this->processed) $this->write();

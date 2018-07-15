@@ -66,7 +66,7 @@ class Html
         if ($writer) $this->writer = $writer;
         if (!$this->writer) return $this;
         $this->writer->startElementNs(Args::NS_XHTML, Elmt::HTML, Args::URI_XHTML);
-        $this->writer->writeAttribute(Args::XMLNS,Args::URI_XFORMS);
+        $this->writer->writeAttribute(Args::XMLNS, Args::URI_XFORMS);
         if (is_callable($header)) $header($this->writer);
         if (is_callable($body)) $body($this->writer);
         $this->writer->endElement();
@@ -79,6 +79,12 @@ class Html
         if (!$this->writer) return '';
         if (!$this->processed) $this->write();
         return $this->writer->xml();
+    }
+
+    public function json_array()
+    {
+        if (!$this->body) return [];
+        return $this->body->json_array();
     }
 
 }

@@ -9,11 +9,13 @@
 namespace Angujo\PhpRosa\Form;
 
 
+use Angujo\PhpRosa\Core\TraitArray;
 use Angujo\PhpRosa\Util\Iteration;
 use Angujo\PhpRosa\Core\Writer;
 
 class ItemsList extends Iteration
 {
+    use TraitArray;
     private $root;
 
     private function __construct($root)
@@ -57,4 +59,5 @@ class ItemsList extends Iteration
         } else $closure($writer);
         return $writer;
     }
+
 }

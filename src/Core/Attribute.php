@@ -34,6 +34,13 @@ class Attribute extends XMLElement
         return $this;
     }
 
+    public function json_array()
+    {
+        parent::preXml($this->attributes);
+        $out[$this->name] = $this->content;
+        return $out;
+    }
+
     public function xml(\XMLWriter $writer)
     {
         parent::preXml($this->attributes);

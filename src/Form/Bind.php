@@ -8,6 +8,7 @@
 
 namespace Angujo\PhpRosa\Form;
 
+use Angujo\PhpRosa\Core\TraitArray;
 use Angujo\PhpRosa\Models\Args;
 use Angujo\PhpRosa\Util\Elmt;
 use Angujo\PhpRosa\Util\Strings;
@@ -132,5 +133,10 @@ class Bind
             case 'orx:max-pixels':
                 return is_numeric($value) ? $value : '1024';
         }
+    }
+
+    public function arrayAccess()
+    {
+        return $this->values;
     }
 }

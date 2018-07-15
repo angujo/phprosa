@@ -9,7 +9,8 @@
 require_once 'src\autoload.php';
 require_once 'vendor\autoload.php';
 
-header('Content-Type: xml\text;charset:utf');
+// header('Content-Type: xml\text;charset:utf');
+header('Content-Type: application/json;charset:utf');
 $faker = Faker\Factory::create();
 $faker->seed(12345);
 
@@ -67,7 +68,7 @@ $xform->endGroup();
 
 
 
-print $xform->xml();
+print json_encode($xform->json_array()) ;
 
 
 function looper(Closure $closure, $limit = 10)

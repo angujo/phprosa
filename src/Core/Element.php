@@ -71,6 +71,24 @@ class Element extends XMLElement
         return $this;
     }
 
+    public function json_array()
+    {
+        $out = [];
+        //parent::preXml($this->attributes);
+        foreach ($this->attributes as $attribute) {
+          $out[$attribute->name]= $attribute->getContent();
+        }
+        if (!empty($this->children)) {
+            $elements = $this->getChildren();
+            foreach ($elements as $element) {
+                $out['children'][][$element->name] = $element->json_array();
+            }
+        } elseif ($this->content) {
+            $out[$this->name] = $this->content;
+        }
+        return $out;
+    }
+
     public function xml(\XMLWriter $writer)
     {
         parent::preXml($this->attributes);

@@ -9,11 +9,13 @@
 namespace Angujo\PhpRosa\Form;
 
 
+use Angujo\PhpRosa\Core\TraitArray;
 use Angujo\PhpRosa\Core\Writer;
 use Angujo\PhpRosa\Util\Elmt;
 
 class Item
 {
+    use TraitArray;
     private $id;
     private $itext = 'itextId';
     private $nodes = [];
@@ -21,9 +23,11 @@ class Item
     protected function __construct($id)
     {
         $this->id = $id;
+        $this->for_array='nodes';
+       // $this->for_array = ['nodes'];
     }
 
-    public static function create($id,$val=null)
+    public static function create($id, $val = null)
     {
         return new self($id);
     }
@@ -45,4 +49,9 @@ class Item
         $writer->endElement();
         return $writer;
     }
+
+   /* public function arrayProperties()
+    {
+        return 'nodes';
+    }*/
 }

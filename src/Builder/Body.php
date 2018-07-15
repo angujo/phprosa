@@ -186,4 +186,13 @@ class Body
     {
         return $this->bindings;
     }
+
+    public function json_array()
+    {
+        $out=[];
+        foreach ($this->controls as $control) {
+            $out[]=$control->arrayAccess();
+        }
+        return $out;
+    }
 }
