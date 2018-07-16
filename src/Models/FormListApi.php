@@ -12,13 +12,14 @@ use Angujo\PhpRosa\Util\Elmt;
 
 
 /**
- * Class FormList
+ * Class FormListApi
  * @package Angujo\PhpRosa\Models
  *
  */
-class FormList
+class FormListApi
 {
     use TraitGenerator;
+
     protected $_xmlns = Args::URI_FORMLIST;
     protected $forms  = [];
     protected $root   = Elmt::FORM_LIST;

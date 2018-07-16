@@ -41,7 +41,9 @@ class ItemsList extends Iteration
 
     public function write(Writer $writer)
     {
-        if (empty($this->list)) return $writer;
+        if (empty($this->list)){
+            return $writer;
+        }
         return $this->wrap($writer, function (Writer $writer) {
             foreach ($this->list as $item) {
                 /** @var Item $item */
@@ -56,7 +58,9 @@ class ItemsList extends Iteration
             $writer->startElement($this->root);
             $closure($writer);
             $writer->endElement();
-        } else $closure($writer);
+        } else{
+            $closure($writer);
+        }
         return $writer;
     }
 

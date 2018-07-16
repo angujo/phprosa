@@ -8,7 +8,16 @@
 
 namespace Angujo\PhpRosa\Models;
 
-
+/**
+ * Class FormGroup
+ * @package Angujo\PhpRosa\Models
+ *
+ * @property $groupId;
+ * @property $name;
+ * @property $listUrl;
+ * @property $descriptionText;
+ * @property $descriptionUrl;
+ */
 class FormGroup extends Factory implements FormInterface
 {
     use TraitGenerator;

@@ -27,23 +27,23 @@ trait TraitGenerator
         $vars = get_object_vars($this);
         $xmlWriter->startElement($this->root);
         foreach ($vars as $var => $val) {
-            if (false===strpos($var,'_') || (false!==strpos($var,'_') && !is_string($val))) continue;
-            $xmlWriter->writeAttribute(ltrim($var,'_'),$val);
+            if (false === strpos($var, '_') || (false !== strpos($var, '_') && !is_string($val))) continue;
+            $xmlWriter->writeAttribute(ltrim($var, '_'), $val);
         }
         foreach ($vars as $property => $value) {
-            if (null === $value || strcasecmp('root', $property) === 0 || false!==strpos($property,'_'))
+            if (null === $value || strcasecmp('root', $property) === 0 || false !== strpos($property, '_'))
                 continue;
             if (is_array($value) && !empty($value)) {
                 //var_dump(array_keys($value));die;
                 foreach ($value as $item) {
-                    if (!is_object($item) || (is_object($item) && (!method_exists($item, 'xml') || !is_callable([$item, 'xml'], false)))){
+                    if (!is_object($item) || (is_object($item) && (!method_exists($item, 'xml') || !is_callable([$item, 'xml'], false)))) {
                         continue;
                     }
                     $item->xml($xmlWriter);
                 }
                 continue;
             }
-            $xmlWriter->writeElement($property,$value);
+            $xmlWriter->writeElement($property, $value);
         }
         $xmlWriter->endElement();
         return $xmlWriter;
@@ -55,12 +55,19 @@ trait TraitGenerator
      */
     public function __set($name, $value)
     {
+        if (property_exists($this, $name)) {
+            $this->{$name} = $value;
+            return;
+        }
         throw new \RuntimeException('Setting properties not allowed!');
     }
 
     public function __get($name)
     {
-        throw new \RuntimeException('Not allowed!');
+        if (property_exists($this, $name)) {
+            return $this->{$name} ;
+        }
+        throw new \RuntimeException("Property '$name' Not found!");
     }
 
     public function __isset($name)

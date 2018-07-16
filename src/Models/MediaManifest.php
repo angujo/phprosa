@@ -10,11 +10,11 @@ namespace Angujo\PhpRosa\Models;
 
 
 /**
- * Class FormList
+ * Class FormListApi
  * @package Angujo\PhpRosa\Models
  *
  */
-class Manifest
+class MediaManifest
 {
     use TraitGenerator;
     protected $_xmlns = Args::URI_MANIFEST;

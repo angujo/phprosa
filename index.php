@@ -8,11 +8,11 @@ $faker = Faker\Factory::create();
 /*
 $form= \PhpRosa\Models\Form::create(['formID'=>$faker->md5,'description'=>$faker->sentence,'allwd'=>'Just OK']);
 $form2= \PhpRosa\Models\Form::create(['formID'=>'myform343','description'=>'Something small','allwd'=>'Just OK']);
-$forms=\PhpRosa\Models\FormList::create($form);$forms->addForm($form2);
+$forms=\PhpRosa\Models\FormListApi::create($form);$forms->addForm($form2);
 $group=\PhpRosa\Models\FormGroup::create(['groupId'=>uniqid('hshs',false),'name'=>'GroupName']);
 
 $m1=\PhpRosa\Models\MediaFile::create(['filename'=>$faker->slug.'.'.$faker->fileExtension,'downloadUrl'=>$faker->url,'hash'=>$faker->md5]);
-$manifest=\PhpRosa\Models\Manifest::create($m1);
+$manifest=\PhpRosa\Models\MediaManifest::create($m1);
 for ($i=0;$i<5;$i++){
     $media=\PhpRosa\Models\MediaFile::create(['filename'=>$faker->slug.'.'.$faker->fileExtension,'downloadUrl'=>$faker->url,'hash'=>$faker->md5]);
     $manifest->addMedia($media);
