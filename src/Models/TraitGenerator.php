@@ -16,6 +16,8 @@ use Angujo\PhpRosa\Core\Writer;
  */
 trait TraitGenerator
 {
+    protected $attributes = [];
+    protected $children   = [];
 
     /**
      *
@@ -24,26 +26,17 @@ trait TraitGenerator
      */
     public function write(Writer $xmlWriter)
     {
-        $vars = get_object_vars($this);
-        $xmlWriter->startElement($this->root);
-        foreach ($vars as $var => $val) {
-            if (false === strpos($var, '_') || (false !== strpos($var, '_') && !is_string($val))) continue;
-            $xmlWriter->writeAttribute(ltrim($var, '_'), $val);
+        $xmlWriter->startElement(self::ELEMENT);
+        foreach ($this->attributes as $attribute) {
+            if (null === $this->{$attribute} || array_key_exists($attribute,$this->children)) continue;
+            $xmlWriter->writeAttribute($attribute, $this->{$attribute});
         }
-        foreach ($vars as $property => $value) {
-            if (null === $value || strcasecmp('root', $property) === 0 || false !== strpos($property, '_'))
-                continue;
-            if (is_array($value) && !empty($value)) {
-                //var_dump(array_keys($value));die;
-                foreach ($value as $item) {
-                    if (!is_object($item) || (is_object($item) && (!method_exists($item, 'xml') || !is_callable([$item, 'xml'], false)))) {
-                        continue;
-                    }
-                    $item->xml($xmlWriter);
-                }
-                continue;
+        foreach ($this->children as $key => $child) {
+            if (is_object($child) && method_exists($child, 'write') && is_callable([$child, 'write'])) {
+                $child->write($xmlWriter);
+            } else {
+                $xmlWriter->writeElement($key, $child);
             }
-            $xmlWriter->writeElement($property, $value);
         }
         $xmlWriter->endElement();
         return $xmlWriter;
@@ -55,24 +48,25 @@ trait TraitGenerator
      */
     public function __set($name, $value)
     {
-        if (property_exists($this, $name)) {
-            $this->{$name} = $value;
+        if (in_array($name, $this->attributes, false)) {
+            $this->children[$name] = $value;
             return;
         }
-        throw new \RuntimeException('Setting properties not allowed!');
+        throw new \RuntimeException('Setting invalid properties not allowed!');
     }
 
     public function __get($name)
     {
-        if (property_exists($this, $name)) {
-            return $this->{$name} ;
+        if (array_key_exists($name, $this->children)) {
+            return $this->children[$name];
         }
+        if (in_array($name, $this->attributes, false)) return null;
         throw new \RuntimeException("Property '$name' Not found!");
     }
 
     public function __isset($name)
     {
-        return property_exists($this, $name);
+        return array_key_exists($name, $this->children) || property_exists($this, $name);
     }
 
 

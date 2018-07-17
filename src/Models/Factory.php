@@ -11,6 +11,10 @@ namespace Angujo\PhpRosa\Models;
 
 abstract class Factory
 {
+    /**
+     * @param null $details
+     * @return static
+     */
     public static function create( $details=null)
     {
         if (is_object($details)) {
@@ -20,6 +24,10 @@ abstract class Factory
         return (new static())->fromArray($det);
     }
 
+    /**
+     * @param array $details
+     * @return static
+     */
     protected function fromArray(array $details)
     {
         foreach ($details as $key => $value) {

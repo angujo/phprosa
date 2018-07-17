@@ -6,11 +6,10 @@
  * Time: 12:05 PM
  */
 
-require_once 'src\autoload.php';
-require_once 'vendor\autoload.php';
+require 'example.php';
 
-$faker = Faker\Factory::create();
-$faker->seed(12345);
+global $type;
+
 
 $text = \Angujo\PhpRosa\Form\Controls\Input::create('This is a text input!', 'textui');
 $text->required = true;
@@ -44,7 +43,7 @@ $doc = \Angujo\PhpRosa\Form\Controls\Upload::document('Upload your CV', 'cv');
 $video=\Angujo\PhpRosa\Form\Controls\Upload::video('Event Video','evt');
 $audio=\Angujo\PhpRosa\Form\Controls\Upload::audio('Event Audio','aud');
 
-$xform = new \Angujo\PhpRosa\Builder\XForm();
+$xform = new \Angujo\PhpRosa\Http\FormEntry();
 $xform->addControl($text);
 $xform->addControl($email);
 $xform->addControl($decimal);
@@ -72,4 +71,6 @@ function looper(Closure $closure, $limit = 10)
     }
 }
 
+if ('xml' === $type) $xform->response()->xml();
+else $xform->response()->array_json();
 

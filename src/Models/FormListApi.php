@@ -8,6 +8,7 @@
 
 namespace Angujo\PhpRosa\Models;
 
+use Angujo\PhpRosa\Core\TraitArray;
 use Angujo\PhpRosa\Util\Elmt;
 
 
@@ -18,24 +19,35 @@ use Angujo\PhpRosa\Util\Elmt;
  */
 class FormListApi
 {
-    use TraitGenerator;
+    use TraitGenerator, TraitArray;
 
     protected $_xmlns = Args::URI_FORMLIST;
-    protected $forms  = [];
-    protected $root   = Elmt::FORM_LIST;
+    const ELEMENT = Elmt::FORM_LIST;
+
+    protected function __construct() { $this->for_array = ['children']; }
 
     /**
-     * @param FormInterface $form
+     * @param Form $form
      * @return static
      */
-    public static function create(FormInterface $form)
+    public static function create(Form $form)
     {
         return (new static())->addForm($form);
     }
 
-    public function addForm(FormInterface $form)
+    public function addForm(Form $form)
     {
-        $this->forms[] = $form;
+        return $this->formInterfacing($form);
+    }
+
+    protected function formInterfacing(FormInterface $form)
+    {
+        $this->children[] = $form;
         return $this;
+    }
+
+    public function addFormGroup(FormGroup $formGroup)
+    {
+        return $this->formInterfacing($formGroup);
     }
 }

@@ -10,6 +10,7 @@ namespace Angujo\PhpRosa\Http;
 
 
 use Angujo\PhpRosa\Builder\XForm;
+use Angujo\PhpRosa\Models\TraitOutput;
 
 /**
  * Class Form
@@ -21,5 +22,5 @@ use Angujo\PhpRosa\Builder\XForm;
  */
 class FormEntry extends XForm
 {
-
+    use TraitOutput;
 }

@@ -22,12 +22,7 @@ class FormGroup extends Factory implements FormInterface
 {
     use TraitGenerator;
 
-    protected $root = 'xforms-group';
-    protected $groupId;
-    protected $name;
-    protected $listUrl;
-    protected $descriptionText;
-    protected $descriptionUrl;
+    const ELEMENT = 'xforms-group';
 
-    protected function __construct() { }
+    protected function __construct() { $this->attributes = ['name', 'groupId', 'listUrl', 'descriptionText', 'descriptionUrl']; }
 }

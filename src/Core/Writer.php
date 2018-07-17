@@ -9,6 +9,8 @@
 namespace Angujo\PhpRosa\Core;
 
 
+use Angujo\PhpRosa\Models\Args;
+
 class Writer
 {
     /** @var Element */
@@ -121,7 +123,7 @@ class Writer
     {
         $writer = new \XMLWriter();
         $writer->openMemory();
-        $writer->startDocument();
+        $writer->startDocument(Args::XML_VERSION, 'UTF-8');
         $this->toXml($writer);
         $writer->endDocument();
 

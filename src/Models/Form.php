@@ -1,6 +1,7 @@
 <?php
 
 namespace Angujo\PhpRosa\Models;
+use Angujo\PhpRosa\Util\Elmt;
 
 /**
  * Class Form
@@ -19,15 +20,19 @@ class Form extends Factory implements FormInterface
 
     use TraitGenerator;
 
-    protected $root = 'xform';
-    protected $formID;
-    protected $name;
-    protected $version;
-    protected $hash;
-    protected $description;
-    protected $downloadURL;
-    protected $manifestUrl;
+    const ELEMENT = Elmt::FORM;
 
-    protected function __construct() { }
+    protected function __construct()
+    {
+        $this->attributes = [
+            'formID',
+            'name',
+            'version',
+            'hash',
+            'description',
+            'downloadURL',
+            'manifestUrl',
+        ];
+    }
 
 }

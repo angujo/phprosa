@@ -9,7 +9,9 @@
 namespace Angujo\PhpRosa\Http;
 
 
+use Angujo\PhpRosa\Core\Writer;
 use Angujo\PhpRosa\Models\FormListApi;
+use Angujo\PhpRosa\Models\TraitOutput;
 
 /**
  * Class FormList
@@ -20,5 +22,5 @@ use Angujo\PhpRosa\Models\FormListApi;
  */
 class FormList extends FormListApi
 {
-
+    use TraitOutput;
 }

@@ -9,15 +9,22 @@
 namespace Angujo\PhpRosa\Models;
 
 
+use Angujo\PhpRosa\Core\TraitArray;
 use Angujo\PhpRosa\Util\Elmt;
 
+/**
+ * Class MediaFile
+ * @package Angujo\PhpRosa\Models
+ *
+ * @property $hash
+ * @property $filename
+ * @property $downloadUrl
+ *
+ */
 class MediaFile extends Factory implements FormInterface
 {
-    use TraitGenerator;
-    protected $root = Elmt::MEDIA_FILE;
-    protected $hash;
-    protected $filename;
-    protected $downloadUrl;
+    use TraitGenerator, TraitArray;
+    const ELEMENT = Elmt::MEDIA_FILE;
 
-    protected function __construct() { }
+    protected function __construct() { $this->attributes = ['hash', 'filename', 'downloadUrl'];$this->for_array='children'; }
 }

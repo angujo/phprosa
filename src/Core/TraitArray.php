@@ -17,8 +17,9 @@ trait TraitArray
 
     public function arrayAccess()
     {
-        if (!is_array($this->for_array)){
-            return $this->{$this->for_array};
+        if (!is_array($this->for_array)) {
+            $property = $this->{$this->for_array};
+            return is_array($property) ? $this->_checkKey($property) : $property;
         }
         $this->for_array = !empty($this->for_array) ? $this->for_array : array_keys(get_object_vars($this));
         if (false !== ($key = array_search('for_array', $this->for_array))) unset($this->for_array[$key]);
@@ -39,7 +40,7 @@ trait TraitArray
     {
         $out = [];
         foreach ($keys as $key) {
-            if (null===$object->{$key}) continue;
+            if (null === $object->{$key}) continue;
             $out[$key] = $this->_checkKey($object->{$key});
         }
         return $out;
