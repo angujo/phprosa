@@ -102,6 +102,16 @@ class Access
         if (!$this->validHA1($ha1)) $this->authFailed('Invalid credentials!');
     }
 
+    public static function authenticateByPassword($password)
+    {
+        (new self())->checkPassword($password);
+    }
+
+    public static function authenticateByHA1($ha1)
+    {
+        (new self())->checkHA1($ha1);
+    }
+
     private function httpAuthorization()
     {
         if (!isset($_SERVER['HTTP_AUTHORIZATION']))
