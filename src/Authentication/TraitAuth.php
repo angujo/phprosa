@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created for Angujo-PhpRosa.
  * User: Angujo Barrack
@@ -8,7 +9,28 @@
 
 namespace Angujo\PhpRosa\Authentication;
 
+trait TraitAuth {
 
-trait TraitAuth
-{
+    protected $_password;
+    protected $_a1;
+    protected static $app_realm;
+
+    /**
+     * 
+     * @param string $realm
+     * @return $this
+     */
+    public static function setAppRealm($realm) {
+        self::$app_realm = $realm;
+        return new static;
+    }
+
+    public function compileBase64($password) {
+        $this->_password=$password;
+    }
+
+    public function compileA1($password) {
+        $this->_password=$password;
+    }
+
 }

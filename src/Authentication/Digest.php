@@ -11,6 +11,8 @@ namespace Angujo\PhpRosa\Authentication;
 
 class Digest extends Basic
 {
+    use TraitAuth;
+    
     protected $nonce;
     protected $opaque;
     protected $realm;
