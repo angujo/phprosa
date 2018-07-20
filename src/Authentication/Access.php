@@ -18,10 +18,10 @@ namespace Angujo\PhpRosa\Authentication;
 class Access
 {
     /** @var Digest|Digest2617|Basic */
-    private $auth;
-    private $realm;
+    private        $auth;
+    private static $realm = 'AngujoBarrack-PhpRosa:Auth';
 
-    public function __construct()
+    protected function __construct()
     {
         if (isset($_SERVER['PHP_AUTH_USER'])) {
             $this->auth = new Basic(['username' => $_SERVER['PHP_AUTH_USER'], 'password' => $_SERVER['PHP_AUTH_PW']]);
@@ -32,9 +32,69 @@ class Access
         }
         if (null === $this->auth || (!is_subclass_of($this->auth, Basic::class) && !is_a($this->auth, Basic::class))) {
             header('HTTP/1.0 401 Missing Authorization');
+            header('Content-Type: text/html');
+            header(sprintf('WWW-Authenticate: Digest realm="%s", nonce="%s", opaque="%s"', self::$realm, md5(uniqid('', true)), md5(uniqid('', true))));
             echo 'Authorization identification missing!';
             die;
         }
+    }
+
+    public function getUsername()
+    {
+        return $this->auth ? $this->auth->getUsername() : null;
+    }
+
+    public static function setRealm($realm)
+    {
+        self::$realm = $realm;
+    }
+
+    /**
+     * @return Access|null
+     */
+    public static function basic()
+    {
+        $me = new self();
+        return is_a($me->auth, Basic::class) ? $me : null;
+    }
+
+    /**
+     * @return Access|null
+     */
+    public static function digest()
+    {
+        $me = new self();
+        return is_subclass_of($me->auth, Basic::class) ? $me : null;
+    }
+
+    /**
+     * @return Access|null
+     */
+    public static function create()
+    {
+        return self::basic() ?: self::digest();
+    }
+
+    public function validPassword($password)
+    {
+        if (is_a($this->auth, Digest::class)) return strcasecmp(md5($this->auth->getUsername() . ':' . $this->auth->getRealm() . ':' . $password), $this->auth->getA1()) === 0;
+        if (is_a($this->auth, Basic::class)) return strcasecmp($password, $this->auth->getPassword()) === 0;
+        return strcasecmp($password, $this->auth->getPassword()) === 0;
+    }
+
+    public function validA1($a1)
+    {
+        if (!is_a($this->auth, Digest::class) || !is_subclass_of($this->auth, Digest::class)) return null;
+        return strcasecmp($this->auth->getA1(), $a1) === 0;
+    }
+
+    /**
+     * @return Access|null
+     */
+    public static function digestFromA1()
+    {
+        $me = new self();
+        return is_subclass_of($me->auth, Basic::class) ? $me : null;
     }
 
     private function httpAuthorization()
