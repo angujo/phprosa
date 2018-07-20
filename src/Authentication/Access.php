@@ -41,6 +41,11 @@ class Access
         call_user_func([$this->auth, 'setAppRealm'], self::$realm);
     }
 
+    public function setAutHeader()
+    {
+        header(sprintf('WWW-Authenticate: Digest realm="%s", nonce="%s", opaque="%s"', self::$realm, self::$nonce, self::$opaque));
+    }
+
     public function getUsername()
     {
         return $this->auth ? $this->auth->getUsername() : null;
@@ -87,6 +92,16 @@ class Access
         return !method_exists($this->auth, 'ha1Valid') ? null : $this->auth->ha1Valid($ha1);
     }
 
+    public function checkPassword($password)
+    {
+        if (!$this->validPassword($password)) $this->authFailed('Invalid Password!');
+    }
+
+    public function checkHA1($ha1)
+    {
+        if (!$this->validHA1($ha1)) $this->authFailed('Invalid credentials!');
+    }
+
     private function httpAuthorization()
     {
         if (!isset($_SERVER['HTTP_AUTHORIZATION']))
@@ -99,11 +114,6 @@ class Access
             return $basic;
         }
         return $this->http_digest_parse(substr($_SERVER['HTTP_AUTHORIZATION'], 8));
-    }
-
-    public function validateBasic(Basic $basic)
-    {
-
     }
 
     /**
@@ -142,7 +152,7 @@ class Access
     {
         header('HTTP/1.1 401 Unauthorized');
         header('Content-Type: text/html');
-        header(sprintf('WWW-Authenticate: Digest realm="%s", nonce="%s", opaque="%s"', self::$realm, self::$nonce, self::$opaque));
+        $this->setAutHeader();
         echo $message;
         exit();
     }
