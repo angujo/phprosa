@@ -17,8 +17,13 @@ class Basic
     public function __construct(array $details = [])
     {
         foreach ($details as $k => $v) {
-            if (property_exists($this, $k)) $this->{$k} = $v;
+            if (property_exists($this, $k)) $this->{$k} = is_string($v) ? trim($v) : $v;
         }
+    }
+
+    public function passwordValid($password)
+    {
+        return strcasecmp($this->password, $password) === 0;
     }
 
     /**

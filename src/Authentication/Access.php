@@ -15,15 +15,17 @@ namespace Angujo\PhpRosa\Authentication;
  *
  * @see https://github.com/phpmasterdotcom/UnderstandingHTTPDigest/blob/master/server.php
  */
-class Access {
+class Access
+{
 
     /** @var Digest|Digest2617|Basic */
-    private $auth;
+    private        $auth;
     private static $realm = 'AngujoBarrack-PhpRosa:Auth';
     private static $nonce;
     private static $opaque;
 
-    protected function __construct() {
+    protected function __construct()
+    {
         if (isset($_SERVER['PHP_AUTH_USER'])) {
             $this->auth = new Basic(['username' => $_SERVER['PHP_AUTH_USER'], 'password' => $_SERVER['PHP_AUTH_PW']]);
         } elseif (isset($_SERVER['PHP_AUTH_DIGEST'])) {
@@ -31,25 +33,29 @@ class Access {
         } elseif (isset($_SERVER['HTTP_AUTHORIZATION'])) {
             $this->auth = $this->httpAuthorization();
         }
+        self::$nonce = md5(uniqid('', true));
+        self::$opaque = md5(uniqid('', true));
         if (null === $this->auth || (!is_subclass_of($this->auth, Basic::class) && !is_a($this->auth, Basic::class))) {
             $this->authFailed('Authorization identification missing!');
         }
-        self::$nonce = md5(uniqid());
-        self::$opaque = md5(uniqid());
+        call_user_func([$this->auth, 'setAppRealm'], self::$realm);
     }
 
-    public function getUsername() {
+    public function getUsername()
+    {
         return $this->auth ? $this->auth->getUsername() : null;
     }
 
-    public static function setRealm($realm) {
+    public static function setRealm($realm)
+    {
         self::$realm = $realm;
     }
 
     /**
      * @return Access|null
      */
-    public static function basic() {
+    public static function basic()
+    {
         $me = new self();
         return is_a($me->auth, Basic::class) ? $me : null;
     }
@@ -57,7 +63,8 @@ class Access {
     /**
      * @return Access|null
      */
-    public static function digest() {
+    public static function digest()
+    {
         $me = new self();
         return is_subclass_of($me->auth, Basic::class) ? $me : null;
     }
@@ -65,35 +72,23 @@ class Access {
     /**
      * @return Access|null
      */
-    public static function create() {
+    public static function create()
+    {
         return self::basic() ?: self::digest();
     }
 
-    public function validPassword($password) {
-        if (is_a($this->auth, Digest::class)) {
-            return strcasecmp(md5($this->auth->getUsername() . ':' . $this->auth->getRealm() . ':' . $password), $this->auth->getA1()) === 0;
-        }
-        if (is_a($this->auth, Basic::class)) {
-            return strcasecmp($password, $this->auth->getPassword()) === 0;
-        }
-        return strcasecmp($password, $this->auth->getPassword()) === 0;
+    public function validPassword($password)
+    {
+        return $this->auth ? $this->auth->passwordValid($password) : null;
     }
 
-    public function validA1($a1) {
-        if (!is_a($this->auth, Digest::class) || !is_subclass_of($this->auth, Digest::class))
-            return null;
-        return strcasecmp($this->auth->getA1(), $a1) === 0;
+    public function validHA1($ha1)
+    {
+        return !method_exists($this->auth, 'ha1Valid') ? null : $this->auth->ha1Valid($ha1);
     }
 
-    /**
-     * @return Access|null
-     */
-    public static function digestFromA1() {
-        $me = new self();
-        return is_subclass_of($me->auth, Basic::class) ? $me : null;
-    }
-
-    private function httpAuthorization() {
+    private function httpAuthorization()
+    {
         if (!isset($_SERVER['HTTP_AUTHORIZATION']))
             return null;
         if (stripos($_SERVER['HTTP_AUTHORIZATION'], 'basic') === 0) {
@@ -106,8 +101,9 @@ class Access {
         return $this->http_digest_parse(substr($_SERVER['HTTP_AUTHORIZATION'], 8));
     }
 
-    public function validateBasic(Basic $basic) {
-        
+    public function validateBasic(Basic $basic)
+    {
+
     }
 
     /**
@@ -116,7 +112,8 @@ class Access {
      *
      * @see http://php.net/manual/en/features.http-auth.php
      */
-    protected function http_digest_parse($txt) {
+    protected function http_digest_parse($txt)
+    {
         // protect against missing data
         $needed_parts = array('nonce' => 1, 'nc' => 1, 'cnonce' => 1,
             'qop' => 1, 'username' => 1, 'uri' => 1,
@@ -141,7 +138,8 @@ class Access {
         return $needed_parts ? null : new Digest2617($data);
     }
 
-    public function authFailed($message) {
+    public function authFailed($message)
+    {
         header('HTTP/1.1 401 Unauthorized');
         header('Content-Type: text/html');
         header(sprintf('WWW-Authenticate: Digest realm="%s", nonce="%s", opaque="%s"', self::$realm, self::$nonce, self::$opaque));

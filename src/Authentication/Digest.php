@@ -12,16 +12,16 @@ namespace Angujo\PhpRosa\Authentication;
 class Digest extends Basic
 {
     use TraitAuth;
-    
+
     protected $nonce;
     protected $opaque;
     protected $realm;
     protected $uri;
     protected $response;
 
-    private $a1;
-    private $a2;
-    private $request_method;
+    private   $a1;
+    private   $a2;
+    protected $request_method;
 
 
     /**
@@ -75,17 +75,42 @@ class Digest extends Basic
     /**
      * @return mixed
      */
-    public function getA1()
+    protected function getA1()
     {
-        return $this->a1 ?: md5("$this->username:$this->realm:$this->password");
+        return "$this->username:$this->realm:$this->password";
+    }
+
+    public function passwordValid($password)
+    {
+        return 0 === strcasecmp($this->genPassWH1($password), $this->getHA2());
+    }
+
+    public function ha1Valid($ha1)
+    {
+        return 0 === strcasecmp($ha1, $this->getHA1());
     }
 
     /**
      * @return mixed
      */
-    public function getA2()
+    protected function getA2()
     {
-        return $this->a2 ?: md5("$this->request_method:$this->uri");
+        return "$this->request_method:$this->uri";
+    }
+
+    protected function getHA1()
+    {
+        return md5($this->getA1());
+    }
+
+    protected function genPassWH1($password)
+    {
+        return md5("$this->username:$this->realm:$password");
+    }
+
+    protected function getHA2()
+    {
+        return md5($this->getA2());
     }
 
     /**
@@ -101,9 +126,9 @@ class Digest extends Basic
     /**
      * @return mixed
      */
-    public function getResponse()
+    protected function getResponse()
     {
-        return $this->response ?: md5($this->getA1() . ':' . $this->nonce . ':' . $this->getA2());
+        return $this->response ?: md5($this->getHA1() . ':' . $this->getNonce() . ':' . $this->getHA2());
     }
 
 
