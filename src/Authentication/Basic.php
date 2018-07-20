@@ -14,6 +14,13 @@ class Basic
     protected $password;
     protected $username;
 
+    public function __construct(array $details = [])
+    {
+        foreach ($details as $k => $v) {
+            if (property_exists($this, $k)) $this->{$k} = $v;
+        }
+    }
+
     /**
      * @return mixed
      */

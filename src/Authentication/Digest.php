@@ -21,10 +21,6 @@ class Digest extends Basic
     private $uri;
     private $response;
 
-    public function __construct($method = null)
-    {
-        $this->request_method = $method ?: $_SERVER['REQUEST_METHOD'];
-    }
 
     /**
      * @return mixed
