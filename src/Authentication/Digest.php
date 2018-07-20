@@ -11,15 +11,15 @@ namespace Angujo\PhpRosa\Authentication;
 
 class Digest extends Basic
 {
-    private $nonce;
-    private $opaque;
-    private $realm;
+    protected $nonce;
+    protected $opaque;
+    protected $realm;
+    protected $uri;
+    protected $response;
 
     private $a1;
     private $a2;
     private $request_method;
-    private $uri;
-    private $response;
 
 
     /**

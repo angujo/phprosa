@@ -19,6 +19,7 @@ class Access
 {
     /** @var Digest|Digest2617|Basic */
     private $auth;
+    private $realm;
 
     public function __construct()
     {
@@ -29,7 +30,7 @@ class Access
         } elseif (isset($_SERVER['HTTP_AUTHORIZATION'])) {
             $this->auth = $this->httpAuthorization();
         }
-        if (null === $this->auth || !is_subclass_of($this->auth, Basic::class) || !is_a($this->auth, Basic::class)) {
+        if (null === $this->auth || (!is_subclass_of($this->auth, Basic::class) && !is_a($this->auth, Basic::class))) {
             header('HTTP/1.0 401 Missing Authorization');
             echo 'Authorization identification missing!';
             die;

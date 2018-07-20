@@ -17,8 +17,8 @@ namespace Angujo\PhpRosa\Authentication;
  */
 class Digest2617 extends Digest
 {
-    private $cnonce;
-    private $qop;
+    protected $cnonce;
+    protected $qop;
 
     /**
      * @return mixed
