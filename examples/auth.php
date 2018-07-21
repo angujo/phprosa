@@ -8,8 +8,12 @@
 
 
 require_once 'example.php';
+\Angujo\PhpRosa\Authentication\Access::setRealm('realm');
+/*\Angujo\PhpRosa\Authentication\Access::authenticateByPassword(function ($username) {
+    return 'does';
+});*/
+\Angujo\PhpRosa\Authentication\Access::authenticateByHA1(function ($username) {
+    return md5('john:'.\Angujo\PhpRosa\Authentication\Access::getRealm().':does');
+});
 
-$acc=new \Angujo\PhpRosa\Authentication\Access();
-
-echo '<pre>';
-print_r($acc);
+print 'We are here: Congrats!';

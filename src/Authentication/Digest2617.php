@@ -81,11 +81,11 @@ class Digest2617 extends Digest
         return parent::getHA2();
     }
 
-    protected function getResponse()
+    /*public function getResponse()
     {
         if (in_array($this->qop, ['auth', 'auth-int'], false)) {
             return md5($this->getHA1() . ':' . $this->getNonce() . ':' . $this->getNc() . ':' . $this->getCnonce() . ':' . $this->getQop() . ':' . $this->getHA2());
         }
         return parent::getResponse();
-    }
+    }*/
 }

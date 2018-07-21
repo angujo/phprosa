@@ -19,9 +19,17 @@ class Digest extends Basic
     protected $uri;
     protected $response;
 
-    private   $a1;
-    private   $a2;
-    protected $request_method;
+    private $ha1;
+
+    /**
+     * @param mixed $response
+     * @return Digest
+     */
+    public function setResponse($response)
+    {
+        $this->response = $response;
+        return $this;
+    }
 
 
     /**
@@ -77,17 +85,8 @@ class Digest extends Basic
      */
     protected function getA1()
     {
+        if (!$this->password) return null;
         return "$this->username:$this->realm:$this->password";
-    }
-
-    public function passwordValid($password)
-    {
-        return 0 === strcasecmp($this->genPassWH1($password), $this->getHA2());
-    }
-
-    public function ha1Valid($ha1)
-    {
-        return 0 === strcasecmp($ha1, $this->getHA1());
     }
 
     /**
@@ -100,7 +99,19 @@ class Digest extends Basic
 
     protected function getHA1()
     {
-        return md5($this->getA1());
+        if ($this->ha1) return $this->ha1;
+        if (!($a1 = $this->getA1())) return null;
+        return md5($a1);
+    }
+
+    /**
+     * @param mixed $ha1
+     * @return Digest
+     */
+    public function setHa1($ha1)
+    {
+        $this->ha1 = $ha1;
+        return $this;
     }
 
     protected function genPassWH1($password)
@@ -110,7 +121,8 @@ class Digest extends Basic
 
     protected function getHA2()
     {
-        return md5($this->getA2());
+        if (!($a2 = $this->getA2())) return null;
+        return md5($a2);
     }
 
     /**
@@ -126,10 +138,8 @@ class Digest extends Basic
     /**
      * @return mixed
      */
-    protected function getResponse()
+    public function getResponse()
     {
         return $this->response ?: md5($this->getHA1() . ':' . $this->getNonce() . ':' . $this->getHA2());
     }
-
-
 }

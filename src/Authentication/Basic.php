@@ -13,12 +13,14 @@ class Basic
 {
     protected $password;
     protected $username;
+    protected $request_method;
 
     public function __construct(array $details = [])
     {
         foreach ($details as $k => $v) {
             if (property_exists($this, $k)) $this->{$k} = is_string($v) ? trim($v) : $v;
         }
+        $this->request_method = $_SERVER['REQUEST_METHOD'];
     }
 
     public function passwordValid($password)

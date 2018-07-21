@@ -18,37 +18,54 @@ namespace Angujo\PhpRosa\Authentication;
 class Access
 {
 
-    /** @var Digest|Digest2617|Basic */
-    private        $auth;
     private static $realm = 'AngujoBarrack-PhpRosa:Auth';
-    private static $nonce;
-    private static $opaque;
+    /** @var Basic|Digest|Digest2617 */
+    private $client;
+    /** @var Basic|Digest|Digest2617 */
+    private $server;
+    private $nonce;
+    private $opaque;
 
     protected function __construct()
     {
+        $this->nonce = md5(uniqid('', true));
+        $this->opaque = md5(uniqid('', true));
+        $this->setAuthHeader();
         if (isset($_SERVER['PHP_AUTH_USER'])) {
-            $this->auth = new Basic(['username' => $_SERVER['PHP_AUTH_USER'], 'password' => $_SERVER['PHP_AUTH_PW']]);
+            $this->client = new Basic(['username' => $_SERVER['PHP_AUTH_USER'], 'password' => $_SERVER['PHP_AUTH_PW']]);
         } elseif (isset($_SERVER['PHP_AUTH_DIGEST'])) {
-            $this->auth = $this->http_digest_parse($_SERVER['PHP_AUTH_DIGEST']);
+            $this->client = $this->http_digest_parse($_SERVER['PHP_AUTH_DIGEST']);
         } elseif (isset($_SERVER['HTTP_AUTHORIZATION'])) {
-            $this->auth = $this->httpAuthorization();
+            $this->client = $this->httpAuthorization();
         }
-        self::$nonce = md5(uniqid('', true));
-        self::$opaque = md5(uniqid('', true));
-        if (null === $this->auth || (!is_subclass_of($this->auth, Basic::class) && !is_a($this->auth, Basic::class))) {
+        if (null === $this->client || (!is_subclass_of($this->client, Basic::class) && !is_a($this->client, Basic::class))) {
             $this->authFailed('Authorization identification missing!');
         }
-        call_user_func([$this->auth, 'setAppRealm'], self::$realm);
+
+        $this->server = clone $this->client;
+        $this->server->setPassword(null);
+        if (!is_a($this->server, Basic::class)) {
+            $this->server->setResponse(null);
+            $this->server->setRealm(self::$realm);
+        }
     }
 
-    public function setAutHeader()
+    public function setAuthHeader()
     {
-        header(sprintf('WWW-Authenticate: Digest realm="%s", nonce="%s", opaque="%s"', self::$realm, self::$nonce, self::$opaque));
+        header(sprintf('WWW-Authenticate: Digest realm="%s", nonce="%s", opaque="%s"', self::$realm, $this->nonce, $this->opaque));
+    }
+
+    /**
+     * @return string
+     */
+    public static function getRealm()
+    {
+        return self::$realm;
     }
 
     public function getUsername()
     {
-        return $this->auth ? $this->auth->getUsername() : null;
+        return $this->client ? $this->client->getUsername() : null;
     }
 
     public static function setRealm($realm)
@@ -56,66 +73,39 @@ class Access
         self::$realm = $realm;
     }
 
-    /**
-     * @return Access|null
-     */
-    public static function basic()
+    public static function authenticateByPassword(\Closure $closure)
     {
+        if (!is_callable($closure)) return null;
         $me = new self();
-        return is_a($me->auth, Basic::class) ? $me : null;
+        $password = $closure($me->client->getUsername());
+        if (null === $password || !is_string($password)) return null;
+        $me->server->setPassword($password);
+        if ((is_a($me->server, Basic::class) && 0 !== strcasecmp($me->server->getPassword(), $me->client->getPassword())) ||
+            (!is_a($me->server, Basic::class) && 0 !== strcasecmp($me->server->getResponse(), $me->client->getResponse()))) {
+            $me->authFailed('Invalid credentials!');
+        }
+        header('HTTP/1.1 200 OK');
     }
 
-    /**
-     * @return Access|null
-     */
-    public static function digest()
+    public static function authenticateByHA1(\Closure $closure)
     {
+        if (!is_callable($closure)) return null;
         $me = new self();
-        return is_subclass_of($me->auth, Basic::class) ? $me : null;
-    }
+        $ha1 = $closure($me->client->getUsername());
+        if (null === $ha1 || !is_string($ha1))  $me->authFailed('Missing permissions!');
+        if (!is_a($me->server, Digest::class) && !is_subclass_of($me->server, Digest::class)) {
+            $me->authFailed('Basic Access not permitted!');
+        }
+        $me->server->setResponse(null);
+        $me->server->setHa1($ha1);
+        if (0 !== strcasecmp($me->client->getResponse(), $me->server->getResponse())) $me->authFailed('Invalid credentials!');
 
-    /**
-     * @return Access|null
-     */
-    public static function create()
-    {
-        return self::basic() ?: self::digest();
-    }
-
-    public function validPassword($password)
-    {
-        return $this->auth ? $this->auth->passwordValid($password) : null;
-    }
-
-    public function validHA1($ha1)
-    {
-        return !method_exists($this->auth, 'ha1Valid') ? null : $this->auth->ha1Valid($ha1);
-    }
-
-    public function checkPassword($password)
-    {
-        if (!$this->validPassword($password)) $this->authFailed('Invalid Password!');
-    }
-
-    public function checkHA1($ha1)
-    {
-        if (!$this->validHA1($ha1)) $this->authFailed('Invalid credentials!');
-    }
-
-    public static function authenticateByPassword($password)
-    {
-        (new self())->checkPassword($password);
-    }
-
-    public static function authenticateByHA1($ha1)
-    {
-        (new self())->checkHA1($ha1);
+        header('HTTP/1.1 200 OK');
     }
 
     private function httpAuthorization()
     {
-        if (!isset($_SERVER['HTTP_AUTHORIZATION']))
-            return null;
+        if (!isset($_SERVER['HTTP_AUTHORIZATION'])) return null;
         if (stripos($_SERVER['HTTP_AUTHORIZATION'], 'basic') === 0) {
             list($username, $password) = explode(':', base64_decode(substr($_SERVER['HTTP_AUTHORIZATION'], 6)));
             $basic = new Basic();
@@ -148,11 +138,8 @@ class Access
             unset($needed_parts[$m[1]]);
         }
 
-        if ($needed_parts) {
-            if (3 === count(array_diff(['nc', 'cnonce', 'qop'], array_keys($data)))) {
-                return new Digest($data);
-            }
-            return null;
+        if (($needed_parts && 3 === count(array_diff(['nc', 'cnonce', 'qop'], array_keys($data)))) || (isset($data['qop']) && 0 === strcmp($data['qop'], 'auth'))) {
+            return new Digest($data);
         }
 
         return $needed_parts ? null : new Digest2617($data);
@@ -162,7 +149,6 @@ class Access
     {
         header('HTTP/1.1 401 Unauthorized');
         header('Content-Type: text/html');
-        $this->setAutHeader();
         echo $message;
         exit();
     }
