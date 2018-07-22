@@ -24,6 +24,7 @@ namespace Angujo\PhpRosa\Form;
  * @property $preload
  * @property $preload_params
  * @property $max_pixels
+ * @property $binding;
  */
 trait TraitBind
 {

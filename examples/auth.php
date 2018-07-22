@@ -8,6 +8,7 @@
 
 
 require_once 'example.php';
+
 \Angujo\PhpRosa\Authentication\Access::setRealm('realm');
 /*\Angujo\PhpRosa\Authentication\Access::authenticateByPassword(function ($username) {
     return 'does';

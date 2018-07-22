@@ -15,6 +15,7 @@ use Angujo\PhpRosa\Form\Controls\Group;
 use Angujo\PhpRosa\Form\Controls\Repeat;
 use Angujo\PhpRosa\Form\Instance;
 use Angujo\PhpRosa\Form\Item;
+use Angujo\PhpRosa\Form\MetaData;
 
 /**
  * Class XForm
@@ -38,6 +39,7 @@ use Angujo\PhpRosa\Form\Item;
  * @method startGroup(string $ref = null, string $label = null)
  * @method endRepeat()
  * @method endGroup()
+ * @method setMeta(MetaData $meta)
  */
 class XForm
 {

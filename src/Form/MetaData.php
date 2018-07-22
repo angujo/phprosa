@@ -10,6 +10,7 @@ namespace Angujo\PhpRosa\Form;
 
 use Angujo\PhpRosa\Models\Args;
 use Angujo\PhpRosa\Core\Writer;
+use Angujo\PhpRosa\Util\Elmt;
 
 /**
  * Class MetaData
@@ -68,7 +69,7 @@ class MetaData
 
     public function write(Writer $writer)
     {
-        $writer->startElementNs(Args::NS_ROSAFORM, 'meta', Args::URI_ROSAFORM);
+        $writer->startElementNs(Args::NS_ROSAFORM, Elmt::META, Args::URI_ROSAFORM);
         foreach ($this->set as $item) {
             $writer->writeElementNs(Args::NS_ROSAFORM, $item, null,null);
         }

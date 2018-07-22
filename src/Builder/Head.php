@@ -13,6 +13,8 @@ use Angujo\PhpRosa\Core\Writer;
 use Angujo\PhpRosa\Form\Bind;
 use Angujo\PhpRosa\Form\Instance;
 use Angujo\PhpRosa\Form\Item;
+use Angujo\PhpRosa\Form\Itext;
+use Angujo\PhpRosa\Form\MetaData;
 use Angujo\PhpRosa\Models\Args;
 use Angujo\PhpRosa\Util\Elmt;
 
@@ -30,6 +32,8 @@ class Head
     private $body;
     /** @var Instance */
     private $instance;
+    /** @var MetaData */
+    private $meta;
 
     /**
      * Head constructor.
@@ -44,6 +48,12 @@ class Head
     public function setTitle($title)
     {
         $this->title = $title;
+        return $this;
+    }
+
+    public function setMeta(MetaData $metaData)
+    {
+        $this->meta = &$metaData;
         return $this;
     }
 
@@ -96,11 +106,11 @@ class Head
     private function parseBody()
     {
         if (!$this->body) return;
-        if (!$this->primaryInstance){
+        if (!$this->primaryInstance) {
             $this->primaryInstance = Instance::create('data-id-here');
             $this->primaryInstance->setPrimary();
         }
-        $this->body->optimize($this->primaryInstance,$this->instances);
+        $this->body->optimize($this->primaryInstance, $this->instances);
         $bindings = $this->body->getBindings();
         foreach ($bindings as $binding) {
             $this->bindings[] = $binding;
@@ -130,11 +140,18 @@ class Head
     {
         if (is_object($body) && is_a($body, Body::class)) $this->body = $body;
         $this->parseBody();
+        if ($this->primaryInstance) {
+            $this->primaryInstance->setMeta($this->meta);
+        }
         $writer->startElementNs(Args::NS_XHTML, Elmt::HEAD, Args::URI_XHTML);
         $writer->writeElementNs(Args::NS_XHTML, Elmt::TITLE, Args::URI_XHTML, $this->title ?: Args::PROJECT);
         $writer->startElement(Elmt::MODEL);
         if (is_callable($before)) $before($writer);
         if ($this->primaryInstance) $this->primaryInstance->write($writer);
+        Itext::writeOut($writer);
+        if ($this->primaryInstance && $this->primaryInstance->primaryBind()) {
+            $this->primaryInstance->primaryBind()->write($writer);
+        }
         if ($this->bindings) {
             foreach ($this->bindings as $binding) {
                 $binding->write($writer);

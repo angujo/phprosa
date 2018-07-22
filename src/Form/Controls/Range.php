@@ -9,6 +9,7 @@
 namespace Angujo\PhpRosa\Form\Controls;
 
 use Angujo\PhpRosa\Form\Control;
+use Angujo\PhpRosa\Form\Data;
 use Angujo\PhpRosa\Util\Elmt;
 
 class Range extends Control
@@ -17,6 +18,12 @@ class Range extends Control
     private $start;
     private $end;
     private $step;
+
+    protected function __construct($l, $n)
+    {
+        parent::__construct($l, $n);
+        $this->type = Data::TYPE_STRING;
+    }
 
     public static function create($label, $name, $start = 0, $end = 5, $step = 1)
     {

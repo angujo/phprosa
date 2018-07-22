@@ -18,4 +18,6 @@ class Session
     public static $active_holder;
     /** @var array */
     public static $xml_namespaces_holders = [];
+
+    public static $translations=[];
 }

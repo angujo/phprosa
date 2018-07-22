@@ -44,7 +44,7 @@ class Access
 
         $this->server = clone $this->client;
         $this->server->setPassword(null);
-        if (!is_a($this->server, Basic::class)) {
+        if (is_a($this->server, Digest::class)) {
             $this->server->setResponse(null);
             $this->server->setRealm(self::$realm);
         }
@@ -75,30 +75,30 @@ class Access
 
     public static function authenticateByPassword(\Closure $closure)
     {
-        if (!is_callable($closure)) return null;
         $me = new self();
+        if (!is_callable($closure)) $me->authFailed('Server Error!');
         $password = $closure($me->client->getUsername());
-        if (null === $password || !is_string($password)) return null;
+        if (null === $password || !is_string($password)) $me->authFailed('Missing credentials!');
         $me->server->setPassword($password);
-        if ((is_a($me->server, Basic::class) && 0 !== strcasecmp($me->server->getPassword(), $me->client->getPassword())) ||
-            (!is_a($me->server, Basic::class) && 0 !== strcasecmp($me->server->getResponse(), $me->client->getResponse()))) {
-            $me->authFailed('Invalid credentials!');
+        if (!is_a($me->server, Basic::class)) $me->authFailed('Invalid Access Authentication!');
+        if ((is_a($me->server, Digest::class) && 0 !== strcasecmp($me->server->getResponse(), $me->client->getResponse())) ||
+            (0 === strcasecmp(get_class($me->server), Basic::class) && 0 !== strcasecmp($me->server->getPassword(), $me->client->getPassword()))) {
+            $me->authFailed('Invalid Username/Password credentials!');
         }
         header('HTTP/1.1 200 OK');
     }
 
     public static function authenticateByHA1(\Closure $closure)
     {
-        if (!is_callable($closure)) return null;
         $me = new self();
+        if (!is_callable($closure)) $me->authFailed('Server Error!');
         $ha1 = $closure($me->client->getUsername());
-        if (null === $ha1 || !is_string($ha1))  $me->authFailed('Missing permissions!');
+        if (null === $ha1 || !is_string($ha1)) $me->authFailed('Missing permissions!');
         if (!is_a($me->server, Digest::class) && !is_subclass_of($me->server, Digest::class)) {
             $me->authFailed('Basic Access not permitted!');
         }
-        $me->server->setResponse(null);
         $me->server->setHa1($ha1);
-        if (0 !== strcasecmp($me->client->getResponse(), $me->server->getResponse())) $me->authFailed('Invalid credentials!');
+        if (0 !== strcasecmp($me->client->getResponse(), $me->server->getResponse())) $me->authFailed('Invalid Hash credentials!');
 
         header('HTTP/1.1 200 OK');
     }

@@ -11,6 +11,8 @@ namespace Angujo\PhpRosa\Form;
 
 use Angujo\PhpRosa\Core\TraitArray;
 use Angujo\PhpRosa\Core\Writer;
+use Angujo\PhpRosa\Models\Args;
+use Angujo\PhpRosa\Util\Elmt;
 
 /**
  * Class Control
@@ -18,17 +20,18 @@ use Angujo\PhpRosa\Core\Writer;
  */
 abstract class Control implements ControlField
 {
-    use TraitArray,TraitBind;
+    use TraitArray, TraitBind;
 
     protected $label;
     protected $hint;
     protected $name;
     protected $output;
-    protected $attributes = [];
+    protected $attributes   = [];
     protected $namespace;
     protected $uri;
     protected $default_value;
-    protected $xpath      = [];
+    protected $xpath        = [];
+    protected $translations = [];
 
     const ELEMENT = 'control';
 
@@ -36,6 +39,12 @@ abstract class Control implements ControlField
     {
         $this->label = $label;
         $this->name = $name;
+        $this->translations[Args::DEF_LANG][md5($this->label)] = $this->label;
+    }
+
+    public function translateLabel($lang, $label)
+    {
+        $this->translations[$lang][md5($label)] = $label;
     }
 
     public static function create($label, $name)
@@ -53,7 +62,11 @@ abstract class Control implements ControlField
 
     protected function labelWrite(Writer $writer)
     {
-        if ($this->label) $writer->writeElement('label', $this->label);
+        if ($this->label) {
+            $writer->startElement(Elmt::LABEL);
+            $writer->writeAttribute('ref', Args::NS_JAVAROSA . ':' . Elmt::ITEXT . "('" . $this->getLabelPath() . "')");
+            $writer->endElement();
+        }
     }
 
     protected function hintWrite(Writer $writer)
@@ -70,9 +83,7 @@ abstract class Control implements ControlField
     {
         if ($this->namespace) $writer->startElementNs($this->namespace, static::ELEMENT, $this->uri);
         else $writer->startElement(static::ELEMENT);
-        $refs = $this->xpath;
-        $refs[] = $this->name;
-        $writer->writeAttribute('ref', implode('/', $refs));
+        $writer->writeAttribute('ref', $this->getRef());
         if (!empty($this->attributes)) {
             foreach ($this->attributes as $name => $val) {
                 $writer->writeAttribute($name, $val);
@@ -85,6 +96,10 @@ abstract class Control implements ControlField
         return $writer;
     }
 
+    private function getRef()
+    {
+        return '/' . implode('/', $this->xpath) . '/' . $this->name;
+    }
 
 
     /**
@@ -120,7 +135,14 @@ abstract class Control implements ControlField
     public function addXpath($xpath)
     {
         $this->xpath[] = $xpath;
+        $this->updateBind();
         return $this;
+    }
+
+    private function updateBind()
+    {
+        if (!$this->binding) $this->binding = new Bind();
+        $this->binding->nodeset = $this->getRef();
     }
 
     /**
@@ -144,6 +166,20 @@ abstract class Control implements ControlField
     public function setRootPath($root)
     {
         array_unshift($this->xpath, $root);
+        $this->updateBind();
         return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getTranslations()
+    {
+        return $this->translations;
+    }
+
+    public function getLabelPath()
+    {
+        return $this->getRef() . ':' . Elmt::LABEL;
     }
 }

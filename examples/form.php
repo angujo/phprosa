@@ -10,6 +10,8 @@ require 'example.php';
 
 global $type;
 
+$meta=new \Angujo\PhpRosa\Form\MetaData();
+$meta->instanceID=true;
 
 $text = \Angujo\PhpRosa\Form\Controls\Input::create('This is a text input!', 'textui');
 $text->required = true;
@@ -44,23 +46,25 @@ $video=\Angujo\PhpRosa\Form\Controls\Upload::video('Event Video','evt');
 $audio=\Angujo\PhpRosa\Form\Controls\Upload::audio('Event Audio','aud');
 
 $xform = new \Angujo\PhpRosa\Http\FormEntry();
+$xform->setMeta($meta);
 $xform->addControl($text);
+$xform->addControl($date);
 $xform->addControl($email);
 $xform->addControl($decimal);
-$xform->addControl($date);
+
+$xform->addControl($doc);
+$xform->addControl($video);
 $xform->addControl($gender);
 $xform->addControl($cities);
 $xform->addControl($rank);
 $xform->addControl($range);
-$xform->addControl($doc);
-$xform->addControl($video);
-$xform->startGroup();
+/*$xform->startGroup();
 $xform->startRepeat();
 $xform->startGroup();
 $xform->addControl($audio);
 $xform->endGroup();
 $xform->endRepeat();
-$xform->endGroup();
+$xform->endGroup();*/
 
 
 

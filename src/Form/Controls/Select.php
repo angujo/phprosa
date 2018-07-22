@@ -10,6 +10,7 @@ namespace Angujo\PhpRosa\Form\Controls;
 
 
 use Angujo\PhpRosa\Form\Control;
+use Angujo\PhpRosa\Form\Data;
 use Angujo\PhpRosa\Form\ItemSet;
 use Angujo\PhpRosa\Form\ItemsList;
 use Angujo\PhpRosa\Core\Writer;
@@ -28,6 +29,7 @@ class Select extends Control
     {
         parent::__construct($label, $n);
         $this->options = ItemsList::create();
+        $this->type = Data::TYPE_STRING;
     }
 
     /**

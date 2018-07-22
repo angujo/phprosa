@@ -33,6 +33,7 @@ class Instance
     private $field_paths = [];
     /** @var ItemsList */
     private $listItem;
+    private $bind;
 
     private $attributes = [
         'id' => 'id',
@@ -58,6 +59,11 @@ class Instance
         $this->checkRoot();
         $control->setRootPath($this->root);
         $this->setRecentPath($control->getXpath());
+        foreach ($control->getTranslations() as $lang => $translations) {
+            foreach ($translations as $id => $translation) {
+                Itext::translate($control->getLabelPath(), $translation, $lang);
+            }
+        }
         $this->field_paths[$this->recent_path][] = FieldSummary::create($control->getName(), $control->getDefaultValue());
         return $this;
     }
@@ -218,5 +224,17 @@ class Instance
     {
         if ($this->primary || !$this->listItem) return null;
         return "instance('$this->id')/$this->root/" . Elmt::ITEM;
+    }
+
+    public function primaryBind()
+    {
+        if (!$this->primary || !$this->meta || ($this->meta && !$this->meta->instanceID)) return null;
+        if ($this->bind) return $this->bind;
+        $bind = new Bind();
+        $bind->nodeset = '/' . $this->root . '/' . Elmt::META . '/instanceID';
+        $bind->type = Data::TYPE_STRING;
+        $bind->readonly = true;
+        $bind->calculate = "concat('uuid:', uuid())";
+        return $this->bind = $bind;
     }
 }

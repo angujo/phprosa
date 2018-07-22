@@ -123,6 +123,7 @@ class Writer
     {
         $writer = new \XMLWriter();
         $writer->openMemory();
+        $writer->setIndentString('  ');
         $writer->startDocument(Args::XML_VERSION, 'UTF-8');
         $this->toXml($writer);
         $writer->endDocument();

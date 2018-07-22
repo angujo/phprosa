@@ -23,7 +23,7 @@ class Args
     const URI_ROSAFORM     = 'http://openrosa.org/xforms';
     const URI_ODKFORMS     = 'http://opendatakit.org/xforms';
 
-    const NS_XHTML    = 'xh';
+    const NS_XHTML    = 'h';
     const NS_JAVAROSA = 'jr';
     const NS_ROSAFORM = 'orx';
     const NS_ODKFORM  = 'odk';
@@ -31,4 +31,5 @@ class Args
     const XMLNS       = 'xmlns';
 
     const XML_VERSION = '1.0';
+    const DEF_LANG    = 'English';
 }

@@ -21,10 +21,14 @@ class FormListApi
 {
     use TraitGenerator, TraitArray;
 
-    protected $_xmlns = Args::URI_FORMLIST;
+    protected $xmlns = Args::URI_FORMLIST;
     const ELEMENT = Elmt::FORM_LIST;
 
-    protected function __construct() { $this->for_array = ['children']; }
+    protected function __construct()
+    {
+        $this->for_array = ['children'];
+        $this->attributes[] = Args::XMLNS;
+    }
 
     /**
      * @param Form $form

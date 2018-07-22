@@ -26,7 +26,7 @@ trait TraitOutput
         $writer = new Writer();
         $this->write($writer);
         if ($this->_output) {
-            header('Content-Type: text/xml;charset:utf-8');
+            header('Content-Type: text/xml');
             print $writer->xml();
             exit;
         }
