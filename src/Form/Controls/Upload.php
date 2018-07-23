@@ -29,7 +29,6 @@ class Upload extends Control
     {
         $me = new self($label, $name);
         $me->types[] = 'image/*';
-        $me->type = Data::TYPE_IMAGE;
         return $me;
     }
 
@@ -42,7 +41,6 @@ class Upload extends Control
         $me->types[] = 'application/msword';
         $me->types[] = 'application/vnd.ms-word.document.macroenabled.12';
         $me->types[] = 'application/vnd.ms-word.template.macroenabled.12';
-        $me->type = Data::TYPE_FILE;
         return $me;
     }
 
@@ -50,7 +48,6 @@ class Upload extends Control
     {
         $me = new self($label, $name);
         $me->types[] = 'video/*';
-        $me->type = Data::TYPE_VIDEO;
         return $me;
     }
 
@@ -58,7 +55,6 @@ class Upload extends Control
     {
         $me = new self($label, $name);
         $me->types[] = 'audio/*';
-        $me->type = Data::TYPE_AUDIO;
         return $me;
     }
 

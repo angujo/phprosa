@@ -19,6 +19,11 @@ class Repeat extends ControlCollection
     private $count;
     private $noAddRemove;
 
+    protected function __construct($ref, $label)
+    {
+        parent::__construct($ref, $label);
+    }
+
     /**
      * @param int $count
      * @return Repeat
@@ -55,7 +60,7 @@ class Repeat extends ControlCollection
     {
         $this->setAddRemove();
         $this->setCounter();
-       return parent::write($writer);
+        return parent::write($writer);
     }
 
 }

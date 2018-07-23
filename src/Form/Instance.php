@@ -237,4 +237,12 @@ class Instance
         $bind->calculate = "concat('uuid:', uuid())";
         return $this->bind = $bind;
     }
+
+    /**
+     * @return string
+     */
+    public function getRoot()
+    {
+        return $this->root;
+    }
 }

@@ -8,6 +8,7 @@
 
 namespace Angujo\PhpRosa\Form\Controls;
 
+use Angujo\PhpRosa\Core\Writer;
 use Angujo\PhpRosa\Form\Control;
 use Angujo\PhpRosa\Form\Data;
 use Angujo\PhpRosa\Util\Elmt;
@@ -22,7 +23,7 @@ class Range extends Control
     protected function __construct($l, $n)
     {
         parent::__construct($l, $n);
-        $this->type = Data::TYPE_STRING;
+        $this->type = Data::TYPE_INT;
     }
 
     public static function create($label, $name, $start = 0, $end = 5, $step = 1)
@@ -50,5 +51,13 @@ class Range extends Control
     {
         $this->end = $end;
         return $this;
+    }
+
+    public function write(Writer $writer, $closure = null)
+    {
+        $this->attributes['start'] = $this->start;
+        $this->attributes['end'] = $this->end;
+        $this->attributes['step'] = $this->step;
+        parent::write($writer, $closure);
     }
 }

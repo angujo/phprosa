@@ -26,8 +26,8 @@ class Elmt
     const ITEM        = 'item';
     const ITEM_SET    = 'itemset';
     const META        = 'meta';
-    const FORM        = 'xform';
-    const FORM_LIST   = 'xforms';
+    const FORM        = 'form';
+    const FORM_LIST   = 'forms';
     const MEDIA_FILE  = 'mediaFile';
     const MANIFEST    = 'manifest';
     const REF         = 'ref';

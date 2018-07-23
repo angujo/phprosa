@@ -31,6 +31,7 @@ class ItemsList extends Iteration
     public function addItem(Item $item)
     {
         $this->list[] = $item;
+        return $item;
     }
 
     public function nullifyRoot()
@@ -41,7 +42,7 @@ class ItemsList extends Iteration
 
     public function write(Writer $writer)
     {
-        if (empty($this->list)){
+        if (empty($this->list)) {
             return $writer;
         }
         return $this->wrap($writer, function (Writer $writer) {
@@ -58,7 +59,7 @@ class ItemsList extends Iteration
             $writer->startElement($this->root);
             $closure($writer);
             $writer->endElement();
-        } else{
+        } else {
             $closure($writer);
         }
         return $writer;

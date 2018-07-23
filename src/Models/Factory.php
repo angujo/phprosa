@@ -12,10 +12,10 @@ namespace Angujo\PhpRosa\Models;
 abstract class Factory
 {
     /**
-     * @param null $details
+     * @param null|array|\ReflectionClass|string $details
      * @return static
      */
-    public static function create( $details=null)
+    public static function create($details = null, $x = null)
     {
         if (is_object($details)) {
             $details = get_object_vars($details);

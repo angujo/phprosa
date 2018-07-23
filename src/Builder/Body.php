@@ -60,15 +60,16 @@ class Body
             if ($control->getBinding()) $this->bindings[] = $control->getBinding();
             $primaryInstance->addField($control);
         } elseif (is_subclass_of($control, ControlCollection::class)) {
+            if ($primaryInstance) $control->setRoot($primaryInstance->getRoot());
             $this->optimizeCollection($control, $primaryInstance, $instances);
         }
-        if (is_a($control, Select::class) || is_subclass_of($control, Select::class)) {
-           // $instance = Instance::create(Strings::random('a',6,true));
+        /*if (is_a($control, Select::class) || is_subclass_of($control, Select::class)) {
+            // $instance = Instance::create(Strings::random('a',6,true));
             //$instance->setItemsList($control->getOptions());
-           // $set = ItemSet::create($instance->itemSetReference());
-          //  $control->setItemSet($set);
-          //  $instances[] =& $instance;
-        }
+            // $set = ItemSet::create($instance->itemSetReference());
+            //  $control->setItemSet($set);
+            //  $instances[] =& $instance;
+        }*/
     }
 
     private function optimizeCollection(ControlCollection $collection, Instance $primaryInstance, array &$instances)
@@ -189,9 +190,9 @@ class Body
 
     public function json_array()
     {
-        $out=[];
+        $out = [];
         foreach ($this->controls as $control) {
-            $out[]=$control->arrayAccess();
+            $out[] = $control->arrayAccess();
         }
         return $out;
     }
