@@ -31,6 +31,12 @@ class Writer
         return true;
     }
 
+    /**
+     * Add an attribute equivalence to XML's
+     * @param type $name
+     * @param type $content
+     * @return type
+     */
     public function writeAttribute($name, $content)
     {
         return $this->writeAttributeNs(null, $name, null, $content);

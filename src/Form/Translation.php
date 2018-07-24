@@ -26,7 +26,7 @@ class Translation
 
     public function addItem($id, $text)
     {
-        $this->items[] = TranslationItem::create($id, $text);
+        $this->items[md5($id)] = TranslationItem::create($id, $text);
         return $this;
     }
 

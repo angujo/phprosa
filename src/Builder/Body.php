@@ -62,6 +62,7 @@ class Body
         } elseif (is_subclass_of($control, ControlCollection::class)) {
             if ($primaryInstance) $control->setRoot($primaryInstance->getRoot());
             $this->optimizeCollection($control, $primaryInstance, $instances);
+            $control->translate();
         }
         /*if (is_a($control, Select::class) || is_subclass_of($control, Select::class)) {
             // $instance = Instance::create(Strings::random('a',6,true));

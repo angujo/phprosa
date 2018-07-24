@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: Angujo Barrack
@@ -8,34 +9,24 @@
 
 namespace Angujo\PhpRosa\Form\Controls;
 
-
 use Angujo\PhpRosa\Core\Writer;
 use Angujo\PhpRosa\Form\Item;
 use Angujo\PhpRosa\Models\Args;
 use Angujo\PhpRosa\Util\Elmt;
 
-class Option extends Item
-{
+class Option extends Item {
+
     const LABEL = 'label';
     const VALUE = 'value';
-    private $translations = [];
+
     private $text;
 
-    public static function create($name, $value = null)
-    {
+    public static function create($name, $value = null, $translate = false, &$translation = null) {
         $me = new self(null);
         $me->text = $name;
-        $me->addTranslation($me->text);
-        $name = null;
-        $me->addNode(self::LABEL, $name);
+        $translation = $me->addNode(self::LABEL, $name, $translate);
         $me->addNode(self::VALUE, $value);
         return $me;
-    }
-
-    public function addTranslation($label, $lang = Args::DEF_LANG)
-    {
-        $this->translations[$lang] = $label;
-        return $this;
     }
 
     /**
@@ -43,15 +34,15 @@ class Option extends Item
      * @param string $reference
      * @return Writer
      */
-    public function write(Writer $writer)
-    {
-        if (empty($this->nodes) || !($ref = func_get_arg(2))) return $writer;
-        $writer->startElement(Elmt::ITEM);
-        if (null !== $this->id) $writer->writeElement($this->itext, $this->id);
-        foreach ($this->nodes as $name => $value) {
-            $writer->writeElement($name, $value);
-        }
-        $writer->endElement();
-        return $writer;
-    }
+    /* public function write(Writer $writer,$ref=null)
+      {
+      if (empty($this->nodes)) return $writer;
+      $writer->startElement(Elmt::ITEM);
+      if (null !== $this->id) $writer->writeElement($this->itext, $this->id);
+      foreach ($this->nodes as $name => $value) {
+      $writer->writeElement($name, $value);
+      }
+      $writer->endElement();
+      return $writer;
+      } */
 }

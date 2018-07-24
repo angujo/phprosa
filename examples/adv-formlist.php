@@ -12,11 +12,10 @@ global $type;
 
 $faker = Faker\Factory::create();
 $form1 = \Angujo\PhpRosa\Models\Form::create();
-$form1->formID =$_SERVER['SERVER_NAME'].':testform101';
 $form1->name = 'This is Another FORM';
-$form1->version = '1.0.1';
-$form1->hash=md5($form1->version.$form1->formID);
 $form1->downloadURL=getBaseUrl().'advanced-form.php?formId='. urlencode('form102');
+
+$form2= \Angujo\PhpRosa\Models\Form::create(getBaseUrl().'select-form.php?formId='.urlencode('selform101'), 'Select Form');
 
 /*$form2 = \Angujo\PhpRosa\Models\Form::create();
 $form2->formID = $faker->slug(2);
@@ -35,6 +34,7 @@ $form_g2->name = $faker->slug(1);
 $form_g2->version = $faker->slug;*/
 
 $list = \Angujo\PhpRosa\Http\FormList::create($form1);
+$list->addForm($form2);
 /*$list->addForm($form2);
 $list->addFormGroup($group);
 $list->addForm($form_g2);*/

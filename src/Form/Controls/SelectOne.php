@@ -20,6 +20,5 @@ class SelectOne extends Select
     protected function __construct($label, $n)
     {
         parent::__construct($label, $n);
-        $this->options = ItemsList::create();
     }
 }

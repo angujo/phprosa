@@ -58,11 +58,7 @@ class Instance {
         $this->checkRoot();
         $control->setRootPath($this->root);
         $this->setRecentPath($control->getXpath());
-        foreach ($control->getTranslations() as $lang => $translations) {
-            foreach ($translations as $id => $translation) {
-                Itext::translate($control->getLabelPath(), $translation, $lang);
-            }
-        }
+        $control->translate();
         $this->field_paths[$this->recent_path][] = FieldSummary::create($control->getName(), $control->getDefaultValue());
         return $this;
     }

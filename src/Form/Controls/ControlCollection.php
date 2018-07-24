@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created for Angujo-PhpRosa.
  * User: Angujo Barrack
@@ -7,7 +8,6 @@
  */
 
 namespace Angujo\PhpRosa\Form\Controls;
-
 
 use Angujo\PhpRosa\Core\Attribute;
 use Angujo\PhpRosa\Core\TraitArray;
@@ -18,53 +18,74 @@ use Angujo\PhpRosa\Form\TraitBind;
 use Angujo\PhpRosa\Models\Args;
 use Angujo\PhpRosa\Util\Elmt;
 use Angujo\PhpRosa\Util\Strings;
+use Angujo\PhpRosa\Form\Itext;
 
-abstract class ControlCollection implements GroupRepeat
-{
-    use TraitArray, TraitBind;
+abstract class ControlCollection implements GroupRepeat {
 
-    public    $id;
+    use TraitArray,
+        TraitBind;
+
+    public $id;
     protected $no_repeat = false;
-
     protected $label;
+
     /** @var ControlField[]|ControlCollection[] */
     protected $controls = [];
+
     /** @var ControlCollection */
     protected $parent;
+
     /** @var Attribute[] */
     protected $attributes = [];
-    const ELEMENT = 'collector';
-    protected $xpath = [];
-    private   $name;
-    private   $root  = '';
+    protected $appearance;
+    protected $translations = [];
+    protected $translated = false;
 
-    protected function __construct($ref, $label)
-    {
+    const ELEMENT = 'collector';
+
+    protected $xpath = [];
+    private $name;
+    private $root = '';
+
+    protected function __construct($ref, $label) {
         // if ($ref) $this->attributes[] = new Attribute('ref', $ref);
         $this->name = $ref ?: 'group_' . Strings::random('a', 8, true);
         $this->label = $label;
+        $this->translations[Args::DEF_LANG] = $this->label;
         $this->id = uniqid('id', false);
         $this->for_array = ['label', 'binding', 'xpath', 'attributes', 'controls'];
         $this->type = static::ELEMENT;
     }
 
-    public static function create($ref = null, $label = null)
-    {
+    public function addTranslation($label, $lang) {
+        $this->translations[$lang] = $label;
+        return $this;
+    }
+
+    public function translate() {
+        foreach ($this->translations as $lang => $translation) {
+            Itext::translate($this->getRef().':'.Elmt::LABEL, $translation, $lang);
+        }
+        $this->translated = TRUE;
+        foreach ($this->controls as $control) {
+            $control->translate();
+        }
+    }
+
+    public static function create($ref = null, $label = null) {
         return new static($ref, $label);
     }
 
-
-    public function addControl(Control $control)
-    {
+    public function addControl(Control $control) {
         $control->setXpath($this->getXpath());
         $this->controls[] = &$control;
         return $this;
     }
 
-    public function addGroup(ControlCollection $repeat)
-    {
+    public function addGroup(ControlCollection $repeat) {
         /** Ensure NO nested repeat elements */
-        if ($this->no_repeat && strcmp($repeat::ELEMENT, Repeat::ELEMENT) === 0) return $this;
+        if ($this->no_repeat && strcmp($repeat::ELEMENT, Repeat::ELEMENT) === 0)
+            return $this;
         $repeat->setNoRepeat($this->no_repeat || strcmp($repeat::ELEMENT, Repeat::ELEMENT) === 0);
         $repeat->setParent($this);
         $repeat->setRoot($this->getRoot());
@@ -76,16 +97,14 @@ abstract class ControlCollection implements GroupRepeat
     /**
      * @return GroupRepeat
      */
-    public function getParent()
-    {
+    public function getParent() {
         return $this->parent;
     }
 
     /**
      * @param GroupRepeat $parent
      */
-    public function setParent(GroupRepeat $parent)
-    {
+    public function setParent(GroupRepeat $parent) {
         $this->parent = $parent;
     }
 
@@ -93,17 +112,20 @@ abstract class ControlCollection implements GroupRepeat
      * @param bool $no_repeat
      * @return ControlCollection
      */
-    public function setNoRepeat($no_repeat)
-    {
-        $this->no_repeat = (bool)$no_repeat;
+    public function setNoRepeat($no_repeat) {
+        $this->no_repeat = (bool) $no_repeat;
+        return $this;
+    }
+
+    public function singleScreen() {
+        $this->appearance = 'field-list';
         return $this;
     }
 
     /**
      * @param Writer $writer
      */
-    public function write(Writer $writer)
-    {
+    public function write(Writer $writer) {
         $writer->startElement(static::ELEMENT);
         foreach ($this->attributes as $attribute) {
             $writer->addAttribute($attribute);
@@ -111,7 +133,18 @@ abstract class ControlCollection implements GroupRepeat
         if (0 === strcmp(Elmt::REPEAT, static::ELEMENT)) {
             $writer->writeAttribute('nodeset', $this->getRef());
         }
-        if ($this->label) $writer->writeElement('label', $this->label);
+        if ($this->appearance) {
+            $writer->writeAttribute('appearance', $this->appearance);
+        }
+        if ($this->label) {
+            if (!$this->translated)
+                $writer->writeElement(Elmt::LABEL, $this->label);
+            else {
+                $writer->startElement(Elmt::LABEL);
+                $writer->writeAttribute('ref', Itext::jr($this->getRef().':'.Elmt::LABEL));
+                $writer->endElement();
+            }
+        }
         foreach ($this->controls as $control) {
             $control->write($writer);
         }
@@ -122,22 +155,19 @@ abstract class ControlCollection implements GroupRepeat
      * @param array $xpath
      * @return ControlCollection
      */
-    public function setXpath(array $xpath)
-    {
+    public function setXpath(array $xpath) {
         $this->xpath = $xpath;
         return $this;
     }
 
-    protected function getRef()
-    {
+    protected function getRef() {
         return '/' . ($this->root ? $this->root . '/' : '') . implode('/', $this->getXpath());
     }
 
     /**
      * @return Control[]|ControlCollection[]
      */
-    public function getControls()
-    {
+    public function getControls() {
         return $this->controls;
     }
 
@@ -145,8 +175,7 @@ abstract class ControlCollection implements GroupRepeat
      * @param string $root
      * @return ControlCollection
      */
-    public function setRoot($root)
-    {
+    public function setRoot($root) {
         $this->root = $root;
         return $this;
     }
@@ -154,8 +183,7 @@ abstract class ControlCollection implements GroupRepeat
     /**
      * @return array
      */
-    public function getXpath()
-    {
+    public function getXpath() {
         $p = $this->xpath;
         $p[] = $this->name;
         return $p;
@@ -164,8 +192,7 @@ abstract class ControlCollection implements GroupRepeat
     /**
      * @return string
      */
-    public function getRoot()
-    {
+    public function getRoot() {
         return $this->root;
     }
 

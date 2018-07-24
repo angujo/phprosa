@@ -44,6 +44,10 @@ class Itext
         $writer->endElement();
         return $writer;
     }
+    
+    public static function jr($ref) {
+        return Args::NS_JAVAROSA.":".Elmt::ITEXT."('$ref')";
+    }
 
     /**
      * @param $id

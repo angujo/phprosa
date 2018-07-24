@@ -30,6 +30,15 @@ class Select extends Control
         parent::__construct($label, $n);
         $this->options = ItemsList::create();
         $this->type = Data::TYPE_STRING;
+        $this->options->setIndexing('opt');
+    }
+    
+    public function translate() {
+        parent::translate();
+        foreach ($this->options as $i=>$option) {
+            $option->setSuffix('opt'.$i);
+            $option->translate($this->getLabelPath(false));
+        }
     }
 
     /**
@@ -51,8 +60,7 @@ class Select extends Control
 
     public function addOption($name, $value)
     {
-        $this->options->addItem(Option::create($name, $value));
-        return $this;
+        return $this->options->addItem(Option::create($name, $value,true));
     }
 
     public function addItem($name, $value)
@@ -63,9 +71,12 @@ class Select extends Control
     public function write(Writer $writer, $closure = null)
     {
         return parent::write($writer, function (Writer $writer) {
-            if (!$this->itemSet) $this->options->write($writer);
-            else $this->itemSet->write($writer);
-        });
+                    if (!$this->itemSet) {
+                        $this->options->write($writer, $this->getLabelPath(false));
+                    } else {
+                        $this->itemSet->write($writer);
+                    }
+                });
     }
 
     /**

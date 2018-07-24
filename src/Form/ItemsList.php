@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: Angujo Barrack
@@ -8,53 +9,65 @@
 
 namespace Angujo\PhpRosa\Form;
 
-
 use Angujo\PhpRosa\Core\TraitArray;
 use Angujo\PhpRosa\Util\Iteration;
 use Angujo\PhpRosa\Core\Writer;
 
-class ItemsList extends Iteration
-{
-    use TraitArray;
-    private $root;
+class ItemsList extends Iteration {
 
-    private function __construct($root)
-    {
+    use TraitArray;
+
+    private $root;
+    private $indexing;
+
+    private function __construct($root) {
         $this->root = $root;
     }
 
-    public static function create($root = null)
-    {
+    public static function create($root = null) {
         return new self($root);
     }
 
-    public function addItem(Item $item)
-    {
+    public function addItem(Item $item) {
         $this->list[] = $item;
         return $item;
     }
 
-    public function nullifyRoot()
-    {
+    public function nullifyRoot() {
         $this->root = null;
         return $this;
     }
 
-    public function write(Writer $writer)
-    {
-        if (empty($this->list)) {
-            return $writer;
-        }
-        return $this->wrap($writer, function (Writer $writer) {
-            foreach ($this->list as $item) {
-                /** @var Item $item */
-                $item->write($writer);
-            }
-        });
+    public function setIndexing($prefix) {
+        $this->indexing = $prefix;
+        return $this;
     }
 
-    private function wrap(Writer $writer, \Closure $closure)
-    {
+    /**
+     * 
+     * @param Writer $writer
+     * @return Writer
+     */
+    public function write(...$args) {
+        if (empty($this->list)) {
+            return $args[0];
+        }
+        return $this->wrap($args[0], function (Writer $writer) use($args) {
+                    $s = 0;
+                    foreach ($this->list as $item) {
+                        /** @var Item $item */
+                        if (method_exists($item, 'write')) {
+                            if ($this->indexing) {
+                                $item->setSuffix($this->indexing . $s);
+                                $s++;
+                            }
+                            call_user_func_array([$item, 'write'], $args);
+                        }
+                    }
+                });
+    }
+
+    private function wrap(Writer $writer, \Closure $closure) {
         if ($this->root) {
             $writer->startElement($this->root);
             $closure($writer);

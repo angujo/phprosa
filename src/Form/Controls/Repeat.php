@@ -19,11 +19,6 @@ class Repeat extends ControlCollection
     private $count;
     private $noAddRemove;
 
-    protected function __construct($ref, $label)
-    {
-        parent::__construct($ref, $label);
-    }
-
     /**
      * @param int $count
      * @return Repeat

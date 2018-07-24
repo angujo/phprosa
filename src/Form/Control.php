@@ -32,6 +32,7 @@ abstract class Control implements ControlField
     protected $default_value;
     protected $xpath        = [];
     protected $translations = [];
+    protected $translated=false;
 
     const ELEMENT = 'control';
 
@@ -64,7 +65,7 @@ abstract class Control implements ControlField
     {
         if ($this->label) {
             $writer->startElement(Elmt::LABEL);
-            $writer->writeAttribute('ref', Args::NS_JAVAROSA . ':' . Elmt::ITEXT . "('" . $this->getLabelPath() . "')");
+            $writer->writeAttribute('ref', Itext::jr( $this->getLabelPath()));
             $writer->endElement();
         }
     }
@@ -83,7 +84,7 @@ abstract class Control implements ControlField
     {
         if ($this->namespace) $writer->startElementNs($this->namespace, static::ELEMENT, $this->uri);
         else $writer->startElement(static::ELEMENT);
-        $writer->writeAttribute('ref', $this->getRef());
+       $writer->writeAttribute('ref', $this->getRef());
         if (!empty($this->attributes)) {
             foreach ($this->attributes as $name => $val) {
                 $writer->writeAttribute($name, $val);
@@ -169,17 +170,18 @@ abstract class Control implements ControlField
         $this->updateBind();
         return $this;
     }
-
-    /**
-     * @return array
-     */
-    public function getTranslations()
-    {
-        return $this->translations;
+    
+    public function translate() {
+        foreach ($this->translations as $lang => $translations) {
+            foreach ($translations as $id => $translation) {
+                Itext::translate($this->getLabelPath(), $translation, $lang);
+            }
+        }
+        $this->translated=TRUE;
     }
 
-    public function getLabelPath()
+    public function getLabelPath($label=true)
     {
-        return $this->getRef() . ':' . Elmt::LABEL;
+        return $this->getRef() . ($label? ':' .Elmt::LABEL:'');
     }
 }
