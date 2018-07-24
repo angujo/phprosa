@@ -40,6 +40,7 @@ use Angujo\PhpRosa\Form\MetaData;
  * @method endRepeat()
  * @method endGroup()
  * @method setMeta(MetaData $meta)
+ * @method  setFormDetails(string $id,string $version) Form Identifiers
  */
 class XForm
 {

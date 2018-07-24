@@ -27,7 +27,7 @@ class FormListApi
     protected function __construct()
     {
         $this->for_array = ['children'];
-        $this->attributes[] = Args::XMLNS;
+        //$this->attributes[] = Args::XMLNS;
     }
 
     /**

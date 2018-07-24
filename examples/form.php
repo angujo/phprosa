@@ -16,7 +16,6 @@ $meta->instanceID=true;
 $text = \Angujo\PhpRosa\Form\Controls\Input::create('This is a text input!', 'textui');
 $text->required = true;
 $text->required_msg = 'Ensure this field has entry!';
-$text->readonly = true;
 
 $email = \Angujo\PhpRosa\Form\Controls\Input::email('Email Address', 'e-mail');
 $decimal = \Angujo\PhpRosa\Form\Controls\Input::decimal('Amount', 'decimal');

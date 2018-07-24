@@ -18,7 +18,7 @@ use Angujo\PhpRosa\Form\Data;
  * @package Angujo\PhpRosa\Form\Controls
  *
  * @method static Input decimal(string $label, string $name, int $places = 0);
- * @method static Input datetime(string $label, string $name);
+ * @method static Input dateTime(string $label, string $name);
  * @method static Input geopoint(string $label, string $name);
  * @method static Input geotrace(string $label, string $name);
  * @method static Input geoshape(string $label, string $name);
@@ -55,12 +55,12 @@ class Input extends Control
     public static function __callStatic($name, $arguments)
     {
         if (count($arguments) < 2) throw new \RuntimeException('At least LABEL and NAME REFERENCE are required for input!');
-        $types = array_merge(Data::types(), array_keys(self::$types));
+        $types = array_merge(array_values(Data::types()), array_keys(self::$types));
         if (!in_array($name, $types, false)) throw new \BadMethodCallException("'$name' is an invalid input type!");
         /** @var self $me */
         $me = call_user_func([__CLASS__, 'create'], $arguments[0], $arguments[1]);
         $_name = array_key_exists($name, array_keys(self::$types)) ? self::$types[$name] : $name;
-        $me->type = strtolower($_name);
+        $me->type = ($_name);
         unset($arguments[0], $arguments[1]);
        self::bind($name, $me, $arguments);
         return $me;

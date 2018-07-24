@@ -16,7 +16,7 @@ class Data
     const TYPE_DECIMAL  = 'decimal';
     const TYPE_DATE     = 'date';
     const TYPE_TIME     = 'time';
-    const TYPE_DATETIME = 'datetime';
+    const TYPE_DATETIME = 'dateTime';
     const TYPE_GEOPOINT = 'geopoint';
     const TYPE_GEOTRACE = 'geotrace';
     const TYPE_GEOSHAPE = 'geoshape';
