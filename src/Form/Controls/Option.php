@@ -14,14 +14,23 @@ use Angujo\PhpRosa\Form\Item;
 use Angujo\PhpRosa\Models\Args;
 use Angujo\PhpRosa\Util\Elmt;
 
-class Option extends Item {
+class Option extends Item
+{
 
     const LABEL = 'label';
     const VALUE = 'value';
 
     private $text;
 
-    public static function create($name, $value = null, $translate = false, &$translation = null) {
+    /**
+     * @param $name
+     * @param null|string $value
+     * @param bool $translate
+     * @param null $translation
+     * @return Option|Item
+     */
+    public static function create($name, $value = null, $translate = false, &$translation = null)
+    {
         $me = new self(null);
         $me->text = $name;
         $translation = $me->addNode(self::LABEL, $name, $translate);

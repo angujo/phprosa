@@ -15,49 +15,55 @@ use Angujo\PhpRosa\Models\Args;
  *
  * @author bangujo
  */
-class ItemNode {
+class ItemNode
+{
 
     private $element;
     private $content;
     private $translations = [];
-    private $trans = false;
+    private $trans        = false;
 
-    protected function __construct($elmt, $cnt, $t = false) {
+    protected function __construct($elmt, $cnt, $t = false)
+    {
         $this->element = $elmt;
         $this->content = $cnt;
         $this->translations[Args::DEF_LANG] = $cnt;
         $this->trans = $t;
     }
 
-    public static function create($elmt, $content, $translatable = false) {
+    public static function create($elmt, $content, $translatable = false)
+    {
         return new self($elmt, $content, $translatable);
     }
 
     /**
      * Add a language translation
-     * @param type $content
-     * @param type $lang
+     * @param string $content
+     * @param string $lang
      * @return $this
      */
-    public function addTranslation($content, $lang) {
+    public function addTranslation($content, $lang)
+    {
         $this->translations[$lang] = $content;
         return $this;
     }
 
-    public function translate($reference) {
-        if(!$this->trans)            return;
+    public function translate($reference)
+    {
+        if (!$this->trans) return;
         foreach ($this->translations as $lang => $cnt) {
             Itext::translate($reference, $cnt, $lang);
         }
     }
 
     /**
-     * 
+     *
      * @param Writer $writer
-     * @param type $reference
+     * @param string $reference
      * @return Writer
      */
-    public function write(Writer $writer, $reference = null) {
+    public function write(Writer $writer, $reference = null)
+    {
         $writer->startElement($this->element);
         if ($reference && !empty($this->translations) && $this->trans) {
             $writer->writeAttribute('ref', Itext::jr($reference));

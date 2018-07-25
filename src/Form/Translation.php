@@ -42,6 +42,7 @@ class Translation
     {
         //var_dump($this->items);die;
         $writer->startElement(Elmt::TRANSLATION);
+        if (0 === strcmp(Args::DEF_LANG, $this->lang)) $writer->writeAttribute('default', 'true()');
         $writer->writeAttribute('lang', $this->lang);
         foreach ($this->items as $item) {
             $item->write($writer);

@@ -11,6 +11,7 @@ namespace Angujo\PhpRosa\Form\Controls;
 
 use Angujo\PhpRosa\Form\Control;
 use Angujo\PhpRosa\Form\Data;
+use Angujo\PhpRosa\Form\ItemNode;
 use Angujo\PhpRosa\Form\ItemSet;
 use Angujo\PhpRosa\Form\ItemsList;
 use Angujo\PhpRosa\Core\Writer;
@@ -32,11 +33,12 @@ class Select extends Control
         $this->type = Data::TYPE_STRING;
         $this->options->setIndexing('opt');
     }
-    
-    public function translate() {
+
+    public function translate()
+    {
         parent::translate();
-        foreach ($this->options as $i=>$option) {
-            $option->setSuffix('opt'.$i);
+        foreach ($this->options as $i => $option) {
+            $option->setSuffix('opt' . $i);
             $option->translate($this->getLabelPath(false));
         }
     }
@@ -58,9 +60,16 @@ class Select extends Control
         $this->itemSet = ItemSet::create($set_ref, $value, $label);
     }
 
+    /**
+     * @param string $name
+     * @param string|int|null $value
+     * @return ItemNode
+     */
     public function addOption($name, $value)
     {
-        return $this->options->addItem(Option::create($name, $value,true));
+        $translatable = null;
+        $this->options->addItem(Option::create($name, $value, true, $translatable));
+        return $translatable;
     }
 
     public function addItem($name, $value)
@@ -71,12 +80,12 @@ class Select extends Control
     public function write(Writer $writer, $closure = null)
     {
         return parent::write($writer, function (Writer $writer) {
-                    if (!$this->itemSet) {
-                        $this->options->write($writer, $this->getLabelPath(false));
-                    } else {
-                        $this->itemSet->write($writer);
-                    }
-                });
+            if (!$this->itemSet) {
+                $this->options->write($writer, $this->getLabelPath(false));
+            } else {
+                $this->itemSet->write($writer);
+            }
+        });
     }
 
     /**

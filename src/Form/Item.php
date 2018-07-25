@@ -54,8 +54,8 @@ class Item {
 
     /**
      * 
-     * @param type $name
-     * @param type $value
+     * @param string $name
+     * @param string $value
      * @return ItemNode
      */
     public function addNode($name, $value,$translate=false) {

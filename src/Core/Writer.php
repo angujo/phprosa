@@ -33,9 +33,9 @@ class Writer
 
     /**
      * Add an attribute equivalence to XML's
-     * @param type $name
-     * @param type $content
-     * @return type
+     * @param string $name
+     * @param string $content
+     * @return bool
      */
     public function writeAttribute($name, $content)
     {
