@@ -50,6 +50,16 @@ class Access
         }
     }
 
+    public static function ha1_2069($username, $password)
+    {
+        return md5($username . ':' . self::$realm . ':' . $password);
+    }
+
+    public static function ha1_2617($username, $password, $nonce, $cnonce)
+    {
+        return md5(self::ha1_2069($username, $password) . ':' . $nonce . ':' . $cnonce);
+    }
+
     public function setAuthHeader()
     {
         header(sprintf('WWW-Authenticate: Digest realm="%s", nonce="%s", opaque="%s"', self::$realm, $this->nonce, $this->opaque));
