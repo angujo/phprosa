@@ -50,11 +50,25 @@ class Access
         }
     }
 
+    /**
+     * This should be used when authentication directive is MD5 or unspecified
+     * @param $username
+     * @param $password
+     * @return string
+     */
     public static function ha1_2069($username, $password)
     {
         return md5($username . ':' . self::$realm . ':' . $password);
     }
 
+    /**
+     * This should be used when algorithm directive is MD5-Sess
+     * @param $username
+     * @param $password
+     * @param $nonce
+     * @param $cnonce
+     * @return string
+     */
     public static function ha1_2617($username, $password, $nonce, $cnonce)
     {
         return md5(self::ha1_2069($username, $password) . ':' . $nonce . ':' . $cnonce);
