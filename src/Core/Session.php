@@ -20,4 +20,6 @@ class Session
     public static $xml_namespaces_holders = [];
 
     public static $translations=[];
+    /** @var string */
+    public static $primary_paths=[];
 }
