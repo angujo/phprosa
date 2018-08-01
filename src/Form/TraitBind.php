@@ -7,6 +7,7 @@
  */
 
 namespace Angujo\PhpRosa\Form;
+use Angujo\PhpRosa\Core\HeadBind;
 
 
 /**
@@ -28,9 +29,6 @@ namespace Angujo\PhpRosa\Form;
  */
 trait TraitBind
 {
-    /** @var Bind */
-    protected $binding;
-
     /*
        * Below we'll extend the Bind for the control
        */
@@ -41,11 +39,13 @@ trait TraitBind
      */
     public function __set($property, $value)
     {
-        if (!$this->binding) {
+        if (!property_exists($this, 'id')) throw new \RuntimeException('Methods using "TraitBind" must have property "id"');
+        HeadBind::getBind($this->id)->{$property} = $value;
+        /*if (!$this->binding) {
             $this->binding = new Bind();
             $this->binding->nodeset = $this->name;
         }
-        $this->binding->{$property} = $value;
+        $this->binding->{$property} = $value;*/
     }
 
     /**
@@ -54,7 +54,7 @@ trait TraitBind
      */
     public function __isset($name)
     {
-        return $this->binding && isset($this->binding->{$name});
+        return true;
     }
 
     /**
@@ -63,7 +63,6 @@ trait TraitBind
      */
     public function __get($name)
     {
-        if (!$this->binding) return null;
-        return $this->binding->{$name};
+        return HeadBind::getBind($this->id)->{$name};
     }
 }

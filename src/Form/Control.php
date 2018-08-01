@@ -9,7 +9,9 @@
 namespace Angujo\PhpRosa\Form;
 
 
+use Angujo\PhpRosa\Core\HeadBind;
 use Angujo\PhpRosa\Core\TraitArray;
+use Angujo\PhpRosa\Core\TraitPath;
 use Angujo\PhpRosa\Core\Writer;
 use Angujo\PhpRosa\Models\Args;
 use Angujo\PhpRosa\Util\Elmt;
@@ -20,17 +22,14 @@ use Angujo\PhpRosa\Util\Elmt;
  */
 abstract class Control implements ControlField
 {
-    use TraitArray, TraitBind;
+    use TraitArray, TraitBind, TraitPath;
 
     protected $label;
     protected $hint;
-    protected $name;
     protected $output;
     protected $attributes   = [];
     protected $namespace;
     protected $uri;
-    protected $default_value;
-    protected $xpath        = [];
     protected $translations = [];
     protected $translated   = false;
 
@@ -39,7 +38,7 @@ abstract class Control implements ControlField
     protected function __construct($label, $name)
     {
         $this->label = $label;
-        $this->name = $name;
+        $this->setName($name);
         $this->translations[Args::DEF_LANG][md5($this->label)] = $this->label;
     }
 
@@ -59,7 +58,7 @@ abstract class Control implements ControlField
      */
     public function getBinding()
     {
-        return $this->binding;
+        return HeadBind::getBind($this->id);
     }
 
     protected function labelWrite(Writer $writer)
@@ -98,19 +97,6 @@ abstract class Control implements ControlField
         return $writer;
     }
 
-    private function getRef()
-    {
-        return '/' . implode('/', $this->xpath) . '/' . $this->name;
-    }
-
-
-    /**
-     * @return mixed
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
 
     /**
      * @param mixed $default_value
@@ -118,59 +104,9 @@ abstract class Control implements ControlField
      */
     public function setDefaultValue($default_value)
     {
-        $this->default_value = $default_value;
-        return $this;
+        return $this->pathValue($default_value);
     }
 
-    /**
-     * @return mixed
-     */
-    public function getDefaultValue()
-    {
-        return $this->default_value;
-    }
-
-    /**
-     * @param string $xpath
-     * @return Control
-     */
-    public function addXpath($xpath)
-    {
-        $this->xpath[] = $xpath;
-        $this->updateBind();
-        return $this;
-    }
-
-    private function updateBind()
-    {
-        if (!$this->binding) $this->binding = new Bind();
-        $this->binding->nodeset = $this->getRef();
-    }
-
-    /**
-     * @return array
-     */
-    public function getXpath()
-    {
-        return $this->xpath;
-    }
-
-    /**
-     * @param array $xpath
-     * @return Control
-     */
-    public function setXpath(array $xpath)
-    {
-        $this->xpath = $xpath;
-        return $this;
-    }
-
-    public function setRootPath($root)
-    {
-        array_unshift($this->xpath, $root);
-        $this->updateBind();
-        return $this;
-    }
 
     public function translate()
     {
@@ -182,8 +118,4 @@ abstract class Control implements ControlField
         $this->translated = TRUE;
     }
 
-    public function getLabelPath($label = true)
-    {
-        return $this->getRef() . ($label ? ':' . Elmt::LABEL : '');
-    }
 }

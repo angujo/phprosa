@@ -53,6 +53,15 @@ class Strings
         $arr = $value;
     }
 
+    public static function valuesToArrayKeys(&$arr, array $keys, $value)
+    {
+        foreach ($keys as $key) {
+            $arr = &$arr[$key];
+        }
+
+        $arr = $value;
+    }
+
     /**
      * @param bool|string $alpha_numeric either TRUE, 'A','N'
      * @param int $length

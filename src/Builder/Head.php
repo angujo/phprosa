@@ -9,6 +9,8 @@
 
 namespace Angujo\PhpRosa\Builder;
 
+use Angujo\PhpRosa\Core\HeadBind;
+use Angujo\PhpRosa\Core\IdPath;
 use Angujo\PhpRosa\Core\Writer;
 use Angujo\PhpRosa\Form\Bind;
 use Angujo\PhpRosa\Form\Instance;
@@ -18,7 +20,8 @@ use Angujo\PhpRosa\Form\MetaData;
 use Angujo\PhpRosa\Models\Args;
 use Angujo\PhpRosa\Util\Elmt;
 
-class Head {
+class Head
+{
 
     private $title;
 
@@ -44,27 +47,33 @@ class Head {
      * Head constructor.
      * @param $body Body
      */
-    public function __construct($body = null) {
+    public function __construct($body = null)
+    {
         $this->body = is_object($body) && is_a($body, Body::class) ? $body : null;
+        IdPath::setRoot('data');
     }
 
     /**
      * @param mixed $title
      * @return Head
      */
-    public function setTitle($title) {
+    public function setTitle($title)
+    {
         $this->title = $title;
         return $this;
     }
 
-    public function setMeta(MetaData $metaData) {
+    public function setMeta(MetaData $metaData)
+    {
         $this->meta = &$metaData;
         return $this;
     }
 
-    public function setFormDetails($id, $version) {
+    public function setFormDetails($id, $version)
+    {
         if (!$this->primaryInstance) {
             $this->primaryInstance = Instance::create($id);
+            $this->primaryInstance->setPrimary();
         }
         $this->primaryInstance->id = $id;
         $this->primaryInstance->version = $version;
@@ -74,14 +83,15 @@ class Head {
      * @param Instance[] $instances
      * @return Head
      */
-    public function setInstances($instances) {
+    public function setInstances($instances)
+    {
         $this->primaryInstance = null;
         $this->instances = [];
         foreach ($instances as $instance) {
             if ($instance->isPrimary()) {
                 if ($this->primaryInstance)
                     continue;
-                $this->primaryInstance = & $instance;
+                $this->primaryInstance = &$instance;
                 continue;
             }
             $this->instances[] = $instance;
@@ -89,11 +99,12 @@ class Head {
         return $this;
     }
 
-    public function addInstance(Instance $instance) {
+    public function addInstance(Instance $instance)
+    {
         if ($this->primaryInstance && $instance->isPrimary())
             return $this;
         if (!$this->primaryInstance && $instance->isPrimary()) {
-            $this->primaryInstance = & $instance;
+            $this->primaryInstance = &$instance;
             return $this;
         }
         $this->instances[] = &$instance;
@@ -104,28 +115,16 @@ class Head {
      * @param Bind[] $bindings
      * @return Head
      */
-    public function setBindings($bindings) {
+    public function setBindings($bindings)
+    {
         $this->bindings = $bindings;
         return $this;
     }
 
-    public function addBinding(Bind $bind) {
+    public function addBinding(Bind $bind)
+    {
         $this->bindings[] = &$bind;
         return $this;
-    }
-
-    private function parseBody() {
-        if (!$this->body)
-            return;
-        if (!$this->primaryInstance) {
-            $this->primaryInstance = Instance::create('data-id-here');
-            $this->primaryInstance->setPrimary();
-        }
-        $this->body->optimize($this->primaryInstance, $this->instances);
-        $bindings = $this->body->getBindings();
-        foreach ($bindings as $binding) {
-            $this->bindings[] = $binding;
-        }
     }
 
     /**
@@ -134,7 +133,8 @@ class Head {
      * @param Writer $writer
      * @param null|Body $body
      */
-    public function write(Writer $writer, $body = null) {
+    public function write(Writer $writer, $body = null)
+    {
         $this->wrap($writer, $body);
     }
 
@@ -146,10 +146,10 @@ class Head {
      * @param \Closure|null $after Called before any element in MODEL
      * @param \Closure|null $before Called after all elements in MODEL
      */
-    public function wrap(Writer $writer, $body = null, \Closure $after = null, \Closure $before = null) {
+    public function wrap(Writer $writer, $body = null, \Closure $after = null, \Closure $before = null)
+    {
         if (is_object($body) && is_a($body, Body::class))
             $this->body = $body;
-        $this->parseBody();
         if ($this->primaryInstance && $this->meta) {
             $this->primaryInstance->setMeta($this->meta);
         }
@@ -164,10 +164,8 @@ class Head {
         if ($this->primaryInstance && $this->primaryInstance->primaryBind()) {
             $this->primaryInstance->primaryBind()->write($writer);
         }
-        if ($this->bindings) {
-            foreach ($this->bindings as $binding) {
-                $binding->write($writer);
-            }
+        foreach (HeadBind::getBinds() as $binding) {
+            $binding->write($writer);
         }
         if ($this->instances) {
             foreach ($this->instances as $instance) {
@@ -180,19 +178,22 @@ class Head {
         $writer->endElement();
     }
 
-    public function startInstance($id, $root = 'root') {
+    public function startInstance($id, $root = 'root')
+    {
         if ($this->instance)
             $this->addInstance($this->instance);
         $this->instance = Instance::create($id, $root);
     }
 
-    public function addItem(Item $item) {
+    public function addItem(Item $item)
+    {
         if (!$this->instance)
             return;
         $this->instance->addItem($item);
     }
 
-    public function endInstance() {
+    public function endInstance()
+    {
         if (!$this->instance)
             return;
         $this->addInstance($this->instance);

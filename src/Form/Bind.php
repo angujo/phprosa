@@ -10,6 +10,7 @@
 namespace Angujo\PhpRosa\Form;
 
 use Angujo\PhpRosa\Core\TraitArray;
+use Angujo\PhpRosa\Core\TraitPath;
 use Angujo\PhpRosa\Models\Args;
 use Angujo\PhpRosa\Util\Elmt;
 use Angujo\PhpRosa\Util\Strings;
@@ -31,7 +32,9 @@ use Angujo\PhpRosa\Core\Writer;
  * @property $preload_params
  * @property $max_pixels
  */
-class Bind {
+class Bind
+{
+    use TraitPath;
 
     protected $attributes = [
         'nodeset',
@@ -48,10 +51,17 @@ class Bind {
         Args::NS_JAVAROSA . ':preloadParams',
         Args::NS_ROSAFORM . ':max-pixels',
     ];
-    private $values = [];
-    private $stringed = [];
+    private   $values     = [];
+    private   $stringed   = [];
 
-    public function __set($property, $val) {
+    public function setId($id)
+    {
+        $this->id = $id;
+        return $this;
+    }
+
+    public function __set($property, $val)
+    {
         $property = $this->slugged($property);
         if (!in_array($property, $this->attributes, false))
             throw new \RuntimeException("'$property' is invalid!");
@@ -59,15 +69,18 @@ class Bind {
         $this->stringfy();
     }
 
-    public function __get($property) {
+    public function __get($property)
+    {
         $property = $this->slugged($property);
         return array_key_exists($property, $this->stringed) ? $this->stringed[$property] : null;
     }
 
-    public function write(Writer $writer) {
+    public function write(Writer $writer)
+    {
         if (empty($this->stringed))
             return $writer;
         $writer->startElement(Elmt::BIND);
+        $writer->writeAttribute('nodeset',$this->getRef());
         foreach ($this->stringed as $attr => $value) {
             if (false !== strpos($attr, ':')) {
                 $sp = explode(':', $attr);
@@ -81,12 +94,14 @@ class Bind {
         return $writer;
     }
 
-    public function __isset($property) {
+    public function __isset($property)
+    {
         $property = $this->slugged($property);
         return array_key_exists($property, $this->values);
     }
 
-    public function slugged($property) {
+    public function slugged($property)
+    {
         foreach ($this->attributes as $attribute) {
             $attr = explode(':', $attribute);
             $attr = Strings::camelCaseToSnake(count($attr) > 1 ? $attr[1] : $attr[0]);
@@ -98,7 +113,8 @@ class Bind {
         return $property;
     }
 
-    private function stringfy() {
+    private function stringfy()
+    {
         foreach ($this->values as $key => $value) {
             if (!in_array($key, $this->attributes, false))
                 continue;
@@ -106,10 +122,11 @@ class Bind {
         }
     }
 
-    private function stringValue($key, $value) {
+    private function stringValue($key, $value)
+    {
         switch ($key) {
             case 'type':
-               return  in_array(strtolower($value), array_map('strtolower',array_values(Data::types())), false) ? $value : Data::TYPE_STRING;
+                return in_array(strtolower($value), array_map('strtolower', array_values(Data::types())), false) ? $value : Data::TYPE_STRING;
                 break;
             case 'required':
                 if (!$this->required_msg && $value)
@@ -131,7 +148,8 @@ class Bind {
         }
     }
 
-    public function arrayAccess() {
+    public function arrayAccess()
+    {
         return $this->values;
     }
 
