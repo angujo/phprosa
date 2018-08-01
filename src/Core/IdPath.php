@@ -6,6 +6,7 @@
  */
 
 namespace Angujo\PhpRosa\Core;
+
 use Angujo\PhpRosa\Util\Elmt;
 use Angujo\PhpRosa\Util\Strings;
 
@@ -20,7 +21,8 @@ class IdPath
 
     /** @var Path[] */
     private $paths = [];
-    private $root;
+    /** @var string  */
+    private $root  = 'root';
 
     protected function __construct()
     {
@@ -89,8 +91,16 @@ class IdPath
         $ps = [];
         foreach ($paths as $path) {
             if ($path->isIgnored()) continue;
-            Strings::dottedToArray($ps,implode('.',$path->rootXPath()),$path->getValue());
+            Strings::dottedToArray($ps, implode('.', $path->rootXPath()), $path->getValue());
         }
         return $ps;
+    }
+
+    /**
+     * @return string
+     */
+    public static function getRoot(): string
+    {
+        return (self::$me ?: new self())->root;
     }
 }

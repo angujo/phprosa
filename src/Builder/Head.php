@@ -72,7 +72,7 @@ class Head
     public function setFormDetails($id, $version)
     {
         if (!$this->primaryInstance) {
-            $this->primaryInstance = Instance::create($id);
+            $this->primaryInstance = Instance::create($id,IdPath::getRoot());
             $this->primaryInstance->setPrimary();
         }
         $this->primaryInstance->id = $id;

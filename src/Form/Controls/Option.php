@@ -17,9 +17,6 @@ use Angujo\PhpRosa\Util\Elmt;
 class Option extends Item
 {
 
-    const LABEL = 'label';
-    const VALUE = 'value';
-
     private $text;
 
     /**
@@ -33,8 +30,8 @@ class Option extends Item
     {
         $me = new self(null);
         $me->text = $name;
-        $translation = $me->addNode(self::LABEL, $name, $translate);
-        $me->addNode(self::VALUE, $value);
+        $translation = $me->addNode(Elmt::LABEL, $name, $translate);
+        $me->addNode(Elmt::VALUE, $value);
         return $me;
     }
 
