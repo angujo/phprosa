@@ -44,7 +44,13 @@ class Itext
         $writer->endElement();
         return $writer;
     }
-    
+
+    /**
+     * JR's iText referencing function
+     * @method jr
+     * @param  string $ref Reference Path
+     * @return string      Functioned URL
+     */
     public static function jr($ref) {
         return Args::NS_JAVAROSA.":".Elmt::ITEXT."('$ref')";
     }

@@ -2,7 +2,7 @@
 
 /*
  * PhpRosa: Php for OpenRosa
- * MIT license * 
+ * MIT license *
  */
 
 namespace Angujo\PhpRosa\Core;
@@ -16,7 +16,10 @@ use Angujo\PhpRosa\Util\Elmt;
  */
 trait TraitPath
 {
-
+    /**
+     * Unique path identifier for the element.
+     * @var string|int
+     */
     private $id;
 
     /**

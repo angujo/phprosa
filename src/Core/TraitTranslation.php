@@ -8,10 +8,12 @@
 
 namespace Angujo\PhpRosa\Core;
 
-
+/**
+ * For classes with translation of variables
+ * @var [type]
+ */
 trait TraitTranslation
 {
     private $_translations = [];
-
 
 }

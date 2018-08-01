@@ -61,6 +61,11 @@ abstract class Control implements ControlField
         return HeadBind::getBind($this->id);
     }
 
+    /**
+     * LabelXML writer
+     * @method labelWrite
+     * @param  Writer     $writer [description]
+     */
     protected function labelWrite(Writer $writer)
     {
         if ($this->label) {
