@@ -24,10 +24,20 @@ class Translation
         $this->lang = $name;
     }
 
+    public static function create($lang)
+    {
+        return new self($lang);
+    }
+
     public function addItem($id, $text)
     {
         $this->items[md5($id)] = TranslationItem::create($id, $text);
         return $this;
+    }
+
+    public function getItem($id)
+    {
+
     }
 
     /**
