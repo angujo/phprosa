@@ -62,8 +62,7 @@ abstract class Iteration implements \Iterator, \ArrayAccess, \Countable
 
     public function count()
     {
-        $c = count($this->list);
-        return ++$c;
+        return \count($this->list);
     }
 
     public function getIterator()

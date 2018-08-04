@@ -59,44 +59,6 @@ class Instance
         return new self($root, $id);
     }
 
-    public function addField(Control $control)
-    {
-        $this->checkRoot();
-        $this->setRecentPath($control->getXpath());
-        $control->translate();
-        $this->field_paths[$this->recent_path][] = FieldSummary::create($control->getName(), $control->getDefaultValue());
-        return $this;
-    }
-
-    private function checkRoot()
-    {
-        if ($this->primary) {
-            $this->root = strcmp('root', $this->root) === 0 ? 'data' : $this->root;
-        }
-    }
-
-    public function addFieldName($name_reference, $value = null)
-    {
-        $this->checkRoot();
-        $name_reference = $this->fieldPath($name_reference);
-        $this->field_paths[$this->recent_path][] = FieldSummary::create($name_reference, $value);
-        return $this;
-    }
-
-    private function fieldPath($name)
-    {
-        $paths = array_filter(preg_split('/[^a-zA-Z\-_]/', $name));
-        $name = array_pop($paths);
-        $this->setRecentPath($paths);
-        return $name;
-    }
-
-    private function setRecentPath(array $paths)
-    {
-        $xpath = implode('/', $paths) ?: null;
-        $this->recent_path = (null === $xpath) ? $this->default_path : $xpath;
-    }
-
     public function __set($property, $value)
     {
         $this->valid($property);

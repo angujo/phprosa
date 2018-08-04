@@ -29,7 +29,6 @@ class Item {
     protected function __construct($id) {
         $this->id = $id;
         $this->for_array = 'nodes';
-        // $this->for_array = ['nodes'];
     }
 
     public static function create($id, $val = null) {
@@ -40,14 +39,7 @@ class Item {
         $this->trans_sfx=$sfx;
         return $this;
     }
-    
-    public function translate($nodeRef) {
-        $nodeRef= $this->nodeRef($nodeRef);
-        foreach ($this->nodes as $node) {
-            $node->translate($nodeRef);
-        }
-    }
-    
+
     private function nodeRef($ref) {
         return $ref?$ref.($this->trans_sfx?':'.$this->trans_sfx:''):'';
     }
@@ -58,11 +50,11 @@ class Item {
      * @param string $value
      * @return ItemNode
      */
-    public function addNode($name, $value,$translate=false) {
+    public function addNode($name, $value) {
         if (null === $name || null === $value) {
             return NULL;
         }
-        $node = ItemNode::create($name, $value,$translate);
+        $node = ItemNode::create($name, $value);
         $this->nodes[] = $node;
         return $node;
     }

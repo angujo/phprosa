@@ -20,7 +20,7 @@ trait TraitPath
      * Unique path identifier for the element.
      * @var string|int
      */
-    private $id;
+    protected $id;
 
     /**
      * @param string $name

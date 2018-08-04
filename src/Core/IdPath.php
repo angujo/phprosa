@@ -21,8 +21,8 @@ class IdPath
 
     /** @var Path[] */
     private $paths = [];
-    /** @var string  */
-    private $root  = 'root';
+    /** @var string */
+    private $root = 'root';
 
     protected function __construct()
     {
@@ -46,6 +46,11 @@ class IdPath
     public static function getPath(&$id)
     {
         return self::init($id)->paths[$id];
+    }
+
+    public static function hasPath($id)
+    {
+        return isset((self::$me ?: new self())->paths[$id]);
     }
 
     /**

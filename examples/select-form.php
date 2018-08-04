@@ -10,6 +10,7 @@ require './example.php';
 global $type;
 
 $gender = Angujo\PhpRosa\Form\Controls\SelectOne::create('Sex', 'sex');
+$gender->addOption('2019', 2019);
 $gender->addOption('male', 'm')->addTranslation('Mwanaume', 'Kiswahili')->addTranslation('Wuoi', 'Dholuo');
 $gender->addOption('Female', 'f')->addTranslation('Mwanamke', 'Kiswahili')->addTranslation('Dhako', 'Dholuo');
 
@@ -34,7 +35,7 @@ $rank->addOption('Orange', 'or');
 $group2 = \Angujo\PhpRosa\Form\Controls\Group::create('foods', 'Fooder');
 $select = \Angujo\PhpRosa\Form\Controls\Select::create('Cuisines', 'cusinie');
 $select->addOption('Pilau', 'pli');
-$select->addOption('Mchuzi','soup');
+$select->addOption('Mchuzi', 'soup');
 $group2->addControl($select);
 
 
@@ -49,5 +50,5 @@ $xform->addControl($range);
 $xform->addGroup($group);
 $xform->addGroup($group2);
 
-//echo '<pre>';print_r(\Angujo\PhpRosa\Core\HeadBind::getBinds());die;
+//echo '<pre>';print_r(\Angujo\PhpRosa\Core\Language::all());die;
 $xform->response()->xml();

@@ -9,6 +9,7 @@
 namespace Angujo\PhpRosa\Form;
 
 
+use Angujo\PhpRosa\Core\Language;
 use Angujo\PhpRosa\Core\Writer;
 use Angujo\PhpRosa\Models\Args;
 use Angujo\PhpRosa\Util\Elmt;
@@ -22,25 +23,13 @@ class Itext
 {
     const ELEMENT = Elmt::ITEXT;
 
-    /** @var Translation[] */
-    private $translations = [];
     /** @var self */
     private static $me;
-
-    public function addTranslation($id, $label, $lang = Args::DEF_LANG)
-    {
-        $key = md5($lang);
-        if (!isset($this->translations[$key])) $this->translations[$key] = new Translation($lang);
-        $this->translations[$key]->addItem($id, $label);
-        return $this;
-    }
 
     public function write(Writer $writer)
     {
         $writer->startElement(Elmt::ITEXT);
-        foreach ($this->translations as $translation) {
-            $translation->write($writer);
-        }
+        Language::write($writer);
         $writer->endElement();
         return $writer;
     }
@@ -51,20 +40,9 @@ class Itext
      * @param  string $ref Reference Path
      * @return string      Functioned URL
      */
-    public static function jr($ref) {
-        return Args::NS_JAVAROSA.":".Elmt::ITEXT."('$ref')";
-    }
-
-    /**
-     * @param $id
-     * @param $label
-     * @param string $lang
-     * @return Itext
-     */
-    public static function translate($id, $label, $lang = Args::DEF_LANG)
+    public static function jr($ref)
     {
-        self::$me = self::$me ?: new self();
-        return self::$me->addTranslation($id, $label, $lang);
+        return Args::NS_JAVAROSA . ":" . Elmt::ITEXT . "('$ref')";
     }
 
     /**

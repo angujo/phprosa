@@ -10,6 +10,7 @@ namespace Angujo\PhpRosa\Form;
 
 
 use Angujo\PhpRosa\Core\HeadBind;
+use Angujo\PhpRosa\Core\Language;
 use Angujo\PhpRosa\Core\TraitArray;
 use Angujo\PhpRosa\Core\TraitPath;
 use Angujo\PhpRosa\Core\Writer;
@@ -39,12 +40,12 @@ abstract class Control implements ControlField
     {
         $this->label = $label;
         $this->setName($name);
-        $this->translations[Args::DEF_LANG][md5($this->label)] = $this->label;
+        if (Language::translatable($this->label)) Language::suffixedPath($this->id, $label, Elmt::LABEL);
     }
 
     public function translateLabel($lang, $label)
     {
-        $this->translations[$lang][md5($label)] = $label;
+        if (Language::translatable($this->label)) Language::suffixedPath($this->id, $label, Elmt::LABEL, $lang);
         return $this;
     }
 
@@ -64,13 +65,14 @@ abstract class Control implements ControlField
     /**
      * LabelXML writer
      * @method labelWrite
-     * @param  Writer     $writer [description]
+     * @param  Writer $writer [description]
      */
     protected function labelWrite(Writer $writer)
     {
         if ($this->label) {
             $writer->startElement(Elmt::LABEL);
-            $writer->writeAttribute('ref', Itext::jr($this->getLabelPath()));
+            if (Language::translatable($this->label)) $writer->writeAttribute('ref', Itext::jr($this->getLabelPath()));
+            else $writer->text($this->label);
             $writer->endElement();
         }
     }
@@ -110,17 +112,6 @@ abstract class Control implements ControlField
     public function setDefaultValue($default_value)
     {
         return $this->pathValue($default_value);
-    }
-
-
-    public function translate()
-    {
-        foreach ($this->translations as $lang => $translations) {
-            foreach ($translations as $id => $translation) {
-                Itext::translate($this->getLabelPath(), $translation, $lang);
-            }
-        }
-        $this->translated = TRUE;
     }
 
 }

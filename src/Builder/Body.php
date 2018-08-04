@@ -43,43 +43,6 @@ class Body
 
     public function __construct() { }
 
-    public function optimize(Instance $primaryInstance, array &$instances = [])
-    {
-        foreach ($this->controls as $control) {
-            $this->doOptimization($control, $primaryInstance, $instances);
-        }
-    }
-
-    /**
-     * @param Control|ControlCollection|Select $control
-     * @param Instance $primaryInstance
-     */
-    private function doOptimization($control, Instance $primaryInstance, array &$instances)
-    {
-        if (is_subclass_of($control, Control::class)) {
-            if ($control->getBinding()) $this->bindings[] = $control->getBinding();
-            $primaryInstance->addField($control);
-        } elseif (is_subclass_of($control, ControlCollection::class)) {
-            if ($primaryInstance) $control->setRoot($primaryInstance->getRoot());
-            $this->optimizeCollection($control, $primaryInstance, $instances);
-            $control->translate();
-        }
-        /*if (is_a($control, Select::class) || is_subclass_of($control, Select::class)) {
-            // $instance = Instance::create(Strings::random('a',6,true));
-            //$instance->setItemsList($control->getOptions());
-            // $set = ItemSet::create($instance->itemSetReference());
-            //  $control->setItemSet($set);
-            //  $instances[] =& $instance;
-        }*/
-    }
-
-    private function optimizeCollection(ControlCollection $collection, Instance $primaryInstance, array &$instances)
-    {
-        foreach ($collection->getControls() as $control) {
-            $this->doOptimization($control, $primaryInstance, $instances);
-        }
-    }
-
     public function addControl(Control $control)
     {
         if ($this->open_group) {
@@ -179,14 +142,6 @@ class Body
         }
         if (is_callable($after)) $after($writer);
         $writer->endElement();
-    }
-
-    /**
-     * @return Bind[]
-     */
-    public function getBindings()
-    {
-        return $this->bindings;
     }
 
     public function json_array()

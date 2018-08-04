@@ -7,6 +7,7 @@
 
 namespace Angujo\PhpRosa\Form;
 
+use Angujo\PhpRosa\Core\IdPath;
 use Angujo\PhpRosa\Core\Writer;
 use Angujo\PhpRosa\Models\Args;
 
@@ -20,15 +21,13 @@ class ItemNode
 
     private $element;
     private $content;
-    private $translations = [];
-    private $trans        = false;
+    private $path_id;
+    private $suffix;
 
     protected function __construct($elmt, $cnt, $t = false)
     {
         $this->element = $elmt;
         $this->content = $cnt;
-        $this->translations[Args::DEF_LANG] = $cnt;
-        $this->trans = $t;
     }
 
     public static function create($elmt, $content, $translatable = false)
@@ -36,24 +35,11 @@ class ItemNode
         return new self($elmt, $content, $translatable);
     }
 
-    /**
-     * Add a language translation
-     * @param string $content
-     * @param string $lang
-     * @return $this
-     */
-    public function addTranslation($content, $lang)
+    public function pathDetails($id, $suffix = null)
     {
-        $this->translations[$lang] = $content;
+        $this->path_id = $id;
+        $this->suffix = $suffix;
         return $this;
-    }
-
-    public function translate($reference)
-    {
-        if (!$this->trans) return;
-        foreach ($this->translations as $lang => $cnt) {
-            Itext::translate($reference, $cnt, $lang);
-        }
     }
 
     /**
@@ -65,9 +51,12 @@ class ItemNode
     public function write(Writer $writer, $reference = null)
     {
         $writer->startElement($this->element);
-        if ($reference && !empty($this->translations) && $this->trans) {
+        if ($this->path_id && IdPath::hasPath($this->path_id)) {
+            $writer->writeAttribute('ref', Itext::jr(IdPath::getPath($this->path_id)->referencePath() . ($this->suffix ? ':' . $this->suffix : '')));
+        }
+        /*if ($reference && !empty($this->translations) && $this->trans) {
             $writer->writeAttribute('ref', Itext::jr($reference));
-        } else {
+        }*/ else {
             $writer->text($this->content);
         }
         $writer->endElement();

@@ -10,6 +10,7 @@
 namespace Angujo\PhpRosa\Form\Controls;
 
 use Angujo\PhpRosa\Core\Attribute;
+use Angujo\PhpRosa\Core\Language;
 use Angujo\PhpRosa\Core\TraitArray;
 use Angujo\PhpRosa\Core\TraitPath;
 use Angujo\PhpRosa\Core\Writer;
@@ -36,10 +37,8 @@ abstract class ControlCollection implements GroupRepeat
     protected $parent;
 
     /** @var Attribute[] */
-    protected $attributes   = [];
+    protected $attributes = [];
     protected $appearance;
-    protected $translations = [];
-    protected $translated   = false;
 
     const ELEMENT = 'collector';
 
@@ -49,26 +48,15 @@ abstract class ControlCollection implements GroupRepeat
         $this->setName($ref ?: 'group_' . Strings::random('a', 8, true));
         $this->ignore();
         $this->label = $label;
-        $this->translations[Args::DEF_LANG] = $this->label;
+        if (Language::translatable($this->label)) Language::suffixedPath($this->id, $this->label, Elmt::LABEL);
         $this->for_array = ['label', 'binding', 'xpath', 'attributes', 'controls'];
         $this->type = static::ELEMENT;
     }
 
     public function addTranslation($label, $lang)
     {
-        $this->translations[$lang] = $label;
+        if (Language::translatable($this->label)) Language::suffixedPath($this->id, $label, Elmt::LABEL, $lang);
         return $this;
-    }
-
-    public function translate()
-    {
-        foreach ($this->translations as $lang => $translation) {
-            Itext::translate($this->getRef() . ':' . Elmt::LABEL, $translation, $lang);
-        }
-        $this->translated = TRUE;
-        foreach ($this->controls as $control) {
-            $control->translate();
-        }
     }
 
     public static function create($ref = null, $label = null)
@@ -143,7 +131,7 @@ abstract class ControlCollection implements GroupRepeat
             $writer->writeAttribute('appearance', $this->appearance);
         }
         if ($this->label) {
-            if (!$this->translated)
+            if (!Language::translatable($this->label))
                 $writer->writeElement(Elmt::LABEL, $this->label);
             else {
                 $writer->startElement(Elmt::LABEL);

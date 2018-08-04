@@ -91,6 +91,11 @@ class Path
         return implode('/', $paths);
     }
 
+    public function referencePath()
+    {
+        return '/' . $this->fullPath();
+    }
+
     /**
      * @return string
      */

@@ -34,15 +34,6 @@ class Select extends Control
         $this->options->setIndexing('opt');
     }
 
-    public function translate()
-    {
-        parent::translate();
-        foreach ($this->options as $i => $option) {
-            $option->setSuffix('opt' . $i);
-            $option->translate($this->getLabelPath(false));
-        }
-    }
-
     /**
      * @param ItemSet|string $set_ref
      * @param string $label_pointer
@@ -63,13 +54,15 @@ class Select extends Control
     /**
      * @param string $name
      * @param string|int|null $value
-     * @return ItemNode
+     * @return Option|\Angujo\PhpRosa\Form\Item
      */
     public function addOption($name, $value)
     {
         $translatable = null;
-        $this->options->addItem(Option::create($name, $value, true, $translatable));
-        return $translatable;
+        $option = Option::create($name, $value, true, $translatable);
+        $option->setDetails($this->id, 'opt' . count($this->options));
+        $this->options->addItem($option);
+        return $option;
     }
 
     public function addItem($name, $value)
