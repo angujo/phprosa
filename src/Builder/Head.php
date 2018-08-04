@@ -76,7 +76,7 @@ class Head
             $this->primaryInstance->setPrimary();
         }
         $this->primaryInstance->id = $id;
-        $this->primaryInstance->version = $version;
+        //$this->primaryInstance->version = $version;
     }
 
     /**
@@ -135,6 +135,10 @@ class Head
      */
     public function write(Writer $writer, $body = null)
     {
+        if (!$this->meta){
+            $this->meta=new MetaData();
+            $this->meta->instanceID=true;
+        }
         $this->wrap($writer, $body);
     }
 

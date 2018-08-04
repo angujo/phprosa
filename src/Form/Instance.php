@@ -34,15 +34,13 @@ class Instance
     /** @var MetaData */
     private $meta;
     private $default_path;
-    private $recent_path;
-    private $field_paths = [];
 
     /** @var ItemsList */
     private $listItem;
     private $bind;
     private $attributes = [
         'id' => 'id',
-        'version' => Args::NS_ROSAFORM . ':version',
+       // 'version' =>  'version',
         'template' => Args::NS_JAVAROSA . ':template',
     ];
     private $values     = [];
@@ -146,9 +144,10 @@ class Instance
     private function setAttributes(Writer $writer)
     {
         foreach ($this->values as $key => $value) {
-            if (0 === strcasecmp('version', $key)) {
+            /*if (0 === strcasecmp('version', $key)) {
                 $writer->writeAttributeNs(Args::NS_ROSAFORM, $key, Args::URI_ROSAFORM, $value);
-            } elseif (0 === strcmp('template', $key)) {
+            } else*/
+            if (0 === strcmp('template', $key)) {
                 $writer->writeAttributeNs(Args::NS_JAVAROSA, $key, Args::URI_JAVAROSA, $value);
             } else {
                 $writer->writeAttribute($this->attributes[$key], $value);
@@ -199,6 +198,7 @@ class Instance
         $bind->nodeset = '/' . $this->root . '/' . Elmt::META . '/instanceID';
         $bind->type = Data::TYPE_STRING;
         $bind->readonly = true;
+        $bind->setForInstance(true);
         $bind->calculate = "concat('uuid:', uuid())";
         return $this->bind = $bind;
     }

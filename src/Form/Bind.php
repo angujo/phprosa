@@ -54,6 +54,8 @@ class Bind
     private   $values     = [];
     private   $stringed   = [];
 
+    private $for_instance=false;
+
     public function setId($id)
     {
         $this->id = $id;
@@ -80,7 +82,7 @@ class Bind
         if (empty($this->stringed))
             return $writer;
         $writer->startElement(Elmt::BIND);
-        $writer->writeAttribute('nodeset',$this->getRef());
+      if (!$this->for_instance)  $writer->writeAttribute('nodeset',$this->getRef());
         foreach ($this->stringed as $attr => $value) {
             if (false !== strpos($attr, ':')) {
                 $sp = explode(':', $attr);
@@ -151,6 +153,16 @@ class Bind
     public function arrayAccess()
     {
         return $this->values;
+    }
+
+    /**
+     * @param bool $for_instance
+     * @return Bind
+     */
+    public function setForInstance($for_instance)
+    {
+        $this->for_instance = $for_instance;
+        return $this;
     }
 
 }

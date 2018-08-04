@@ -69,9 +69,9 @@ class MetaData
 
     public function write(Writer $writer)
     {
-        $writer->startElementNs(Args::NS_ROSAFORM, Elmt::META, Args::URI_ROSAFORM);
+        $writer->startElement(Elmt::META);
         foreach ($this->set as $item) {
-            $writer->writeElementNs(Args::NS_ROSAFORM, $item, null,null);
+            $writer->writeElement($item, null);
         }
         $writer->endElement();
     }
